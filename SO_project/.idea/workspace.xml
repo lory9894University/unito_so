@@ -11,7 +11,33 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="811d5f64-8ed6-44b4-baec-dea2c20a2ee4" name="Default Changelist" comment="" />
+    <list default="true" id="811d5f64-8ed6-44b4-baec-dea2c20a2ee4" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/error_handling.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shared_res.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/C.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/C.includecache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/DependInfo.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/DependInfo.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/build.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/build.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/cmake_clean.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/cmake_clean.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/depend.internal" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/depend.internal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/depend.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/depend.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/link.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/link.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/master.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/master.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/player.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/player.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/progress.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/progress.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/progress.marks" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/progress.marks" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/SO_project" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/SO_project" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/SO_project.cbp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/SO_project.cbp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/env_operation.h" beforeDir="false" afterPath="$PROJECT_DIR$/env_operation.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/error_handling.h" beforeDir="false" afterPath="$PROJECT_DIR$/error_handling.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/master.c" beforeDir="false" afterPath="$PROJECT_DIR$/master.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player.c" beforeDir="false" afterPath="$PROJECT_DIR$/player.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player.h" beforeDir="false" afterPath="$PROJECT_DIR$/player.h" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -78,6 +104,25 @@
   </component>
   <component name="SvnConfiguration" cleanupOnStartRun="true">
     <configuration>$USER_HOME$/.subversion</configuration>
+    <supportedVersion>125</supportedVersion>
+  </component>
+  <component name="SvnFileUrlMappingImpl">
+    <option name="myMappingRoots">
+      <list>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="$PROJECT_DIR$" />
+          <option name="myCopyRoot" value="$PROJECT_DIR$" />
+        </SvnCopyRootSimple>
+      </list>
+    </option>
+    <option name="myMoreRealMappingRoots">
+      <list>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="$PROJECT_DIR$" />
+          <option name="myCopyRoot" value="$PROJECT_DIR$" />
+        </SvnCopyRootSimple>
+      </list>
+    </option>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -86,58 +131,87 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1575106818138</updated>
-      <workItem from="1575106820266" duration="11138000" />
+      <workItem from="1575106820266" duration="11212000" />
+      <workItem from="1575127770957" duration="7485000" />
     </task>
+    <task id="LOCAL-00001">
+      <created>1575125078810</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1575125078810</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="LAST_COMMIT_MESSAGE" value="" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="2371" y="211" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1575123855008">
       <screen x="0" y="27" width="3840" height="1053" />
     </state>
     <state x="2371" y="211" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.27.3840.1053@0.27.3840.1053" timestamp="1575123855008" />
-    <state x="2402" y="150" width="1012" height="814" key="CommitChangelistDialog2" timestamp="1575125074572">
-      <screen x="0" y="27" width="3840" height="1053" />
+    <state x="3121" y="126" width="1012" height="814" key="CommitChangelistDialog2" timestamp="1575135277923">
+      <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2402" y="150" width="1012" height="814" key="CommitChangelistDialog2/0.27.3840.1053@0.27.3840.1053" timestamp="1575125074572" />
+    <state x="3121" y="126" key="CommitChangelistDialog2/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575135277923" />
     <state x="2650" y="317" width="515" height="479" key="EnvironmentVariablesDialog" timestamp="1575123852804">
       <screen x="0" y="27" width="3840" height="1053" />
     </state>
     <state x="2650" y="317" width="515" height="479" key="EnvironmentVariablesDialog/0.27.3840.1053@0.27.3840.1053" timestamp="1575123852804" />
-    <state width="1807" height="275" key="GridCell.Tab.0.bottom" timestamp="1575124007247">
+    <state width="1807" height="275" key="GridCell.Tab.0.bottom" timestamp="1575135205898">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1807" height="340" key="GridCell.Tab.0.bottom/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
+    <state width="1807" height="275" key="GridCell.Tab.0.bottom/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575135205898" />
+    <state width="1807" height="275" key="GridCell.Tab.0.center" timestamp="1575135205898">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1807" height="340" key="GridCell.Tab.0.center/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
+    <state width="1807" height="275" key="GridCell.Tab.0.center/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575135205898" />
+    <state width="1807" height="275" key="GridCell.Tab.0.left" timestamp="1575135205898">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1807" height="340" key="GridCell.Tab.0.left/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121336" />
+    <state width="1807" height="275" key="GridCell.Tab.0.left/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575135205898" />
+    <state width="1807" height="275" key="GridCell.Tab.0.right" timestamp="1575135205898">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1807" height="340" key="GridCell.Tab.0.right/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
+    <state width="1807" height="275" key="GridCell.Tab.0.right/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575135205898" />
+    <state width="1807" height="340" key="GridCell.Tab.1.bottom" timestamp="1575135152965">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1807" height="340" key="GridCell.Tab.1.bottom/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
+    <state width="1807" height="340" key="GridCell.Tab.1.bottom/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575135152965" />
+    <state width="1807" height="340" key="GridCell.Tab.1.center" timestamp="1575135152964">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1807" height="340" key="GridCell.Tab.1.center/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
+    <state width="1807" height="340" key="GridCell.Tab.1.center/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575135152964" />
+    <state width="1807" height="340" key="GridCell.Tab.1.left" timestamp="1575135152964">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1807" height="340" key="GridCell.Tab.1.left/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
+    <state width="1807" height="340" key="GridCell.Tab.1.left/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575135152964" />
+    <state width="1807" height="340" key="GridCell.Tab.1.right" timestamp="1575135152965">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1807" height="340" key="GridCell.Tab.1.right/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
+    <state width="1807" height="340" key="GridCell.Tab.1.right/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575135152965" />
+    <state x="2711" y="402" width="394" height="310" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1575125084993">
       <screen x="0" y="27" width="3840" height="1053" />
     </state>
-    <state width="1807" height="275" key="GridCell.Tab.0.bottom/0.27.3840.1053@0.27.3840.1053" timestamp="1575124007247" />
-    <state width="1807" height="275" key="GridCell.Tab.0.center" timestamp="1575124007247">
-      <screen x="0" y="27" width="3840" height="1053" />
-    </state>
-    <state width="1807" height="275" key="GridCell.Tab.0.center/0.27.3840.1053@0.27.3840.1053" timestamp="1575124007247" />
-    <state width="1807" height="275" key="GridCell.Tab.0.left" timestamp="1575124007247">
-      <screen x="0" y="27" width="3840" height="1053" />
-    </state>
-    <state width="1807" height="275" key="GridCell.Tab.0.left/0.27.3840.1053@0.27.3840.1053" timestamp="1575124007247" />
-    <state width="1807" height="275" key="GridCell.Tab.0.right" timestamp="1575124007247">
-      <screen x="0" y="27" width="3840" height="1053" />
-    </state>
-    <state width="1807" height="275" key="GridCell.Tab.0.right/0.27.3840.1053@0.27.3840.1053" timestamp="1575124007247" />
-    <state width="1807" height="340" key="GridCell.Tab.1.bottom" timestamp="1575123622023">
-      <screen x="0" y="27" width="3840" height="1053" />
-    </state>
-    <state width="1807" height="340" key="GridCell.Tab.1.bottom/0.27.3840.1053@0.27.3840.1053" timestamp="1575123622023" />
-    <state width="1807" height="340" key="GridCell.Tab.1.center" timestamp="1575123622023">
-      <screen x="0" y="27" width="3840" height="1053" />
-    </state>
-    <state width="1807" height="340" key="GridCell.Tab.1.center/0.27.3840.1053@0.27.3840.1053" timestamp="1575123622023" />
-    <state width="1807" height="340" key="GridCell.Tab.1.left" timestamp="1575123622023">
-      <screen x="0" y="27" width="3840" height="1053" />
-    </state>
-    <state width="1807" height="340" key="GridCell.Tab.1.left/0.27.3840.1053@0.27.3840.1053" timestamp="1575123622023" />
-    <state width="1807" height="340" key="GridCell.Tab.1.right" timestamp="1575123622023">
-      <screen x="0" y="27" width="3840" height="1053" />
-    </state>
-    <state width="1807" height="340" key="GridCell.Tab.1.right/0.27.3840.1053@0.27.3840.1053" timestamp="1575123622023" />
+    <state x="2711" y="402" width="394" height="310" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.27.3840.1053@0.27.3840.1053" timestamp="1575125084993" />
     <state x="47" y="0" width="1356" height="1009" maximized="true" key="dock-window-1" timestamp="1575119700543">
       <screen x="0" y="27" width="3840" height="1053" />
     </state>
@@ -156,18 +230,10 @@
     <state x="2708" y="457" width="400" height="200" key="svn.upgradeDialog/0.27.3840.1053@0.27.3840.1053" timestamp="1575125043455" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/master.c</url>
-          <line>58</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="CMakeRunConfiguration">
         <watch expression="envp" language="ObjectiveC" />
+        <watch expression="shmId" language="ObjectiveC" />
       </configuration>
     </watches-manager>
   </component>

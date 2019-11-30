@@ -4,6 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
+  "/home/lorenzo/workspaces/CLionProjects/SO_project/error_handling.c" "/home/lorenzo/workspaces/CLionProjects/SO_project/cmake-build-debug/CMakeFiles/SO_project.dir/error_handling.c.o"
   "/home/lorenzo/workspaces/CLionProjects/SO_project/master.c" "/home/lorenzo/workspaces/CLionProjects/SO_project/cmake-build-debug/CMakeFiles/SO_project.dir/master.c.o"
   "/home/lorenzo/workspaces/CLionProjects/SO_project/player.c" "/home/lorenzo/workspaces/CLionProjects/SO_project/cmake-build-debug/CMakeFiles/SO_project.dir/player.c.o"
   )

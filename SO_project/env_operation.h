@@ -1,3 +1,7 @@
+#ifndef SO_PROJECT_ENV_OPERATION_H
+#define SO_PROJECT_ENV_OPERATION_H
+#define _GNU_SOURCE
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "error_handling.h"
@@ -67,3 +71,5 @@ void envReading(char **envp, env *environment) {
         error("environment variable SO_MIN_HOLD_NSEC not set");
     environment->SO_MIN_HOLD_NSEC = atoi(SO_MIN_HOLD_NSEC_str);
 }
+
+#endif
