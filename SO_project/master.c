@@ -5,18 +5,31 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/ipc.h>
 #include <sys/wait.h>
-#include <strings.h>
+#include <sys/shm.h>
+#include <sys/sem.h>
+#include <string.h>
 #include "env_operation.h"
 #include "player.h"
+#include "shared_res.h"
+#include "pawn.h"
 
 #define DEBUG
-typedef struct {
-    int base, height;
-} table;
 
-void tableCreation(int base, int height) {
-    //TODO: da fare
+int shmId;
+
+table *tableCreation(int base, int height) {
+    table *mytable;
+    shmId = shmget(IPC_PRIVATE, sizeof(table), 0660);
+    //TODO: come cazzo si usa IPC_EXCL?
+    test_error();
+    mytable = shmat(shmId, NULL, 0);
+    test_error();
+
+    mytable->base = base;
+    mytable->height = height;
+    return mytable;
 }
 
 void printState() {
@@ -62,14 +75,20 @@ void playerKill(int numPlayers, pid_t *players) {
 
 int main(int argc, char **argv, char **envp) {
     env environment;
+    table *sharedTable;
+    pid_t *players;
 
     envReading(envp, &environment);
 #ifdef DEBUG
     printf("%d", environment.SO_NUM_G);
 #endif
-    tableCreation(environment.SO_BASE, environment.SO_ALTEZZA);
+    sharedTable = tableCreation(environment.SO_BASE, environment.SO_ALTEZZA);
+    //todo: così facendo (creazione delal tabella *prima* della creazione dei figli, essi avvranno nel loro stack 2 puntatori alla memoria, uno praticamente inutile però)
     playersCreation(environment.SO_NUM_G, environment.SO_NUM_G);
 
-
+    //cleanig what is left
+    while (wait(NULL) != -1);
+    shmctl(shmId, IPC_RMID, NULL);
+    shmdt(sharedTable);
     return 0;
 }

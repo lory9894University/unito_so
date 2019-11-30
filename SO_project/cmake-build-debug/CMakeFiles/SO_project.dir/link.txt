@@ -1,1 +1,1 @@
-/usr/bin/cc -g   CMakeFiles/SO_project.dir/master.c.o CMakeFiles/SO_project.dir/player.c.o  -o SO_project 
+/usr/bin/cc -g   CMakeFiles/SO_project.dir/master.c.o CMakeFiles/SO_project.dir/player.c.o CMakeFiles/SO_project.dir/error_handling.c.o  -o SO_project 
