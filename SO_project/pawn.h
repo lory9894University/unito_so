@@ -1,0 +1,4 @@
+#ifndef SO_PROJECT_PAWN_H
+#define SO_PROJECT_PAWN_H
+
+#endif //SO_PROJECT_PAWN_H
