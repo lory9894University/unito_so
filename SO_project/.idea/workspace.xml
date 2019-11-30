@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="SO_project" targetName="SO_project" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="811d5f64-8ed6-44b4-baec-dea2c20a2ee4" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="ProjectId" id="1UKYaZl3FXohulOnBIuDVw7zV4q" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="settings.editor.selected.configurable" value="language.cpp.clang-tidy" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="SO_project" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SO_project" TARGET_NAME="SO_project" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SO_project" RUN_TARGET_NAME="SO_project">
+      <envs>
+        <env name="SO_NUM_G" value="10" />
+        <env name="SO_NUM_P" value="10" />
+        <env name="SO_MAX_TIME" value="10" />
+        <env name="SO_BASE" value="10" />
+        <env name="SO_ALTEZZA" value="10" />
+        <env name="SO_FLAG_MIN" value="10" />
+        <env name="SO_FLAG_MAX" value="10" />
+        <env name="SO_ROUND_SCORE" value="10" />
+        <env name="SO_N_MOVES" value="10" />
+        <env name="SO_MIN_HOLD_NSEC" value="10" />
+      </envs>
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration" cleanupOnStartRun="true">
+    <configuration>$USER_HOME$/.subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="811d5f64-8ed6-44b4-baec-dea2c20a2ee4" name="Default Changelist" comment="" />
+      <created>1575106818138</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1575106818138</updated>
+      <workItem from="1575106820266" duration="11138000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="2371" y="211" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1575123855008">
+      <screen x="0" y="27" width="3840" height="1053" />
+    </state>
+    <state x="2371" y="211" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.27.3840.1053@0.27.3840.1053" timestamp="1575123855008" />
+    <state x="2402" y="150" width="1012" height="814" key="CommitChangelistDialog2" timestamp="1575125074572">
+      <screen x="0" y="27" width="3840" height="1053" />
+    </state>
+    <state x="2402" y="150" width="1012" height="814" key="CommitChangelistDialog2/0.27.3840.1053@0.27.3840.1053" timestamp="1575125074572" />
+    <state x="2650" y="317" width="515" height="479" key="EnvironmentVariablesDialog" timestamp="1575123852804">
+      <screen x="0" y="27" width="3840" height="1053" />
+    </state>
+    <state x="2650" y="317" width="515" height="479" key="EnvironmentVariablesDialog/0.27.3840.1053@0.27.3840.1053" timestamp="1575123852804" />
+    <state width="1807" height="275" key="GridCell.Tab.0.bottom" timestamp="1575124007247">
+      <screen x="0" y="27" width="3840" height="1053" />
+    </state>
+    <state width="1807" height="275" key="GridCell.Tab.0.bottom/0.27.3840.1053@0.27.3840.1053" timestamp="1575124007247" />
+    <state width="1807" height="275" key="GridCell.Tab.0.center" timestamp="1575124007247">
+      <screen x="0" y="27" width="3840" height="1053" />
+    </state>
+    <state width="1807" height="275" key="GridCell.Tab.0.center/0.27.3840.1053@0.27.3840.1053" timestamp="1575124007247" />
+    <state width="1807" height="275" key="GridCell.Tab.0.left" timestamp="1575124007247">
+      <screen x="0" y="27" width="3840" height="1053" />
+    </state>
+    <state width="1807" height="275" key="GridCell.Tab.0.left/0.27.3840.1053@0.27.3840.1053" timestamp="1575124007247" />
+    <state width="1807" height="275" key="GridCell.Tab.0.right" timestamp="1575124007247">
+      <screen x="0" y="27" width="3840" height="1053" />
+    </state>
+    <state width="1807" height="275" key="GridCell.Tab.0.right/0.27.3840.1053@0.27.3840.1053" timestamp="1575124007247" />
+    <state width="1807" height="340" key="GridCell.Tab.1.bottom" timestamp="1575123622023">
+      <screen x="0" y="27" width="3840" height="1053" />
+    </state>
+    <state width="1807" height="340" key="GridCell.Tab.1.bottom/0.27.3840.1053@0.27.3840.1053" timestamp="1575123622023" />
+    <state width="1807" height="340" key="GridCell.Tab.1.center" timestamp="1575123622023">
+      <screen x="0" y="27" width="3840" height="1053" />
+    </state>
+    <state width="1807" height="340" key="GridCell.Tab.1.center/0.27.3840.1053@0.27.3840.1053" timestamp="1575123622023" />
+    <state width="1807" height="340" key="GridCell.Tab.1.left" timestamp="1575123622023">
+      <screen x="0" y="27" width="3840" height="1053" />
+    </state>
+    <state width="1807" height="340" key="GridCell.Tab.1.left/0.27.3840.1053@0.27.3840.1053" timestamp="1575123622023" />
+    <state width="1807" height="340" key="GridCell.Tab.1.right" timestamp="1575123622023">
+      <screen x="0" y="27" width="3840" height="1053" />
+    </state>
+    <state width="1807" height="340" key="GridCell.Tab.1.right/0.27.3840.1053@0.27.3840.1053" timestamp="1575123622023" />
+    <state x="47" y="0" width="1356" height="1009" maximized="true" key="dock-window-1" timestamp="1575119700543">
+      <screen x="0" y="27" width="3840" height="1053" />
+    </state>
+    <state x="47" y="0" width="1356" height="1009" maximized="true" key="dock-window-1/0.27.3840.1053@0.27.3840.1053" timestamp="1575119700543" />
+    <state x="2695" y="452" key="svn.passwordDialog" timestamp="1575125024980">
+      <screen x="0" y="27" width="3840" height="1053" />
+    </state>
+    <state x="2695" y="452" key="svn.passwordDialog/0.27.3840.1053@0.27.3840.1053" timestamp="1575125024980" />
+    <state x="2665" y="244" width="486" height="625" key="svn.repositoryBrowser" timestamp="1575125042218">
+      <screen x="0" y="27" width="3840" height="1053" />
+    </state>
+    <state x="2665" y="244" width="486" height="625" key="svn.repositoryBrowser/0.27.3840.1053@0.27.3840.1053" timestamp="1575125042218" />
+    <state x="2708" y="457" width="400" height="200" key="svn.upgradeDialog" timestamp="1575125043455">
+      <screen x="0" y="27" width="3840" height="1053" />
+    </state>
+    <state x="2708" y="457" width="400" height="200" key="svn.upgradeDialog/0.27.3840.1053@0.27.3840.1053" timestamp="1575125043455" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/master.c</url>
+          <line>58</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="CMakeRunConfiguration">
+        <watch expression="envp" language="ObjectiveC" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>
