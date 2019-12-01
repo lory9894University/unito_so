@@ -34,11 +34,11 @@ table *tableCreation(int base, int height) {
     myTable->height = height;
     myTable->matrix = malloc(sizeof(char *) * height);
     myTable->semMatrix = malloc(sizeof(int) * height);
-    for (i = 0; i < base; ++i) {
+    for (i = 0; i < height; ++i) {
         myTable->matrix[i] = malloc(sizeof(char) * base);
         myTable->semMatrix[i] = semget(IPC_PRIVATE, base, 0600);;
-        for (j = 0; j < height; ++j) {
-            myTable->matrix[i][j] = 'O';
+        for (j = 0; j < base; ++j) {
+            myTable->matrix[i][j] = ' ';
             semctl(myTable->semMatrix[i], j, SETVAL, 1);
         }
     }
@@ -46,7 +46,8 @@ table *tableCreation(int base, int height) {
     return myTable;
 }
 
-void printState(table myTable) {
+void printState(
+        table myTable) { /*TODO:chiedere al prof come faccio a far entrare una tabella di 120 colonne in uno schermo da 15 pollici */
     int i, j, k;
 
     for (i = 0; i < myTable.base; ++i) {
@@ -66,15 +67,42 @@ void printState(table myTable) {
     }
 }
 
-void flagsPositioning(table gameTable, int minFlag, int maxFlag, int roundScore) {
-    int flagNum;
+flag *flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScore) {
+    int flagNum, flagNotValued;
+    int postionXY, X, Y, positionOccupied;
+    int i, j;
+    flag *flags;
 
     srand(getpid());
-    flagNum = (rand() % (maxFlag - minFlag) + minFlag);
+    flagNotValued = flagNum = ((rand() % (maxFlag - (minFlag - 1))) + minFlag);
+    flags = malloc(sizeof(flag) * flagNum);
 
     /*todo: posizionamento delle bandiere sulla matrice schacchiera.
     i giocatori devono sapere il valore della bandiera?*/
+    for (i = 0; i < flagNum; ++i) {
+        /*flag value randomly assigned*/
+        flags[i].value = (rand() % (roundScore - flagNotValued--) + 1);
+        roundScore -= flags[i].value;
+        flags[i].taken = 0;
 
+        /*flag position randomly assigned, if the position is already occupied it calculate a nev postion*/
+        positionOccupied = 1;
+        while (positionOccupied) {
+            postionXY = (rand() % (gameTable->base * gameTable->height));
+            positionOccupied = 0;
+            for (j = 0; j < (flagNum - flagNotValued) && !positionOccupied; ++j) {
+                if ((flags[j].xPos * flags[j].yPos) == postionXY) {
+                    positionOccupied = 1;
+                }
+            }
+        }
+
+        X = (int) postionXY / gameTable->base;
+        Y = (int) postionXY % gameTable->base;
+        flags[i].xPos = X;
+        flags[i].yPos = Y;
+        gameTable->matrix[X][Y] = 'F';
+    }
 }
 
 pid_t *playersCreation(int numPlayers, int numPawn) {
@@ -112,7 +140,8 @@ int main(int argc, char **argv, char **envp) {
     setvbuf(stdout, NULL, _IONBF, 0);
     envReading(envp, &environment);
     sharedTable = tableCreation(environment.SO_BASE, environment.SO_ALTEZZA);
-    //todo: così facendo (creazione delal tabella *prima* della creazione dei figli, essi avvranno nel loro stack 2 puntatori alla memoria, uno praticamente inutile però)
+    flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX, environment.SO_ROUND_SCORE);
+    printState(*sharedTable);
     playersCreation(environment.SO_NUM_G, environment.SO_NUM_G);
 
     /*cleanig what is left*/
