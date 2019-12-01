@@ -18,8 +18,9 @@ extern int shmId;
 void playerBirth(int pawnNumber) {
     table *sharedTable;
     //sleep(10);
-
-    fprintf(stderr, "%d", shmId);
+#ifdef DEBUG
+    printf("%d ", shmId);
+#endif
     sharedTable = shmat(shmId, NULL, 0);
     test_error();
     shmdt(sharedTable);

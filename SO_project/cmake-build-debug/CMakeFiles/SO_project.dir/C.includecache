@@ -6,6 +6,14 @@
 
 #IncludeRegexTransform: 
 
+/home/lorenzo/workspaces/CLionProjects/SO_project/env_operation.h
+stdlib.h
+-
+stdio.h
+-
+error_handling.h
+/home/lorenzo/workspaces/CLionProjects/SO_project/error_handling.h
+
 /home/lorenzo/workspaces/CLionProjects/SO_project/error_handling.h
 stdlib.h
 -
@@ -16,7 +24,7 @@ string.h
 errno.h
 -
 
-/home/lorenzo/workspaces/CLionProjects/SO_project/player.c
+/home/lorenzo/workspaces/CLionProjects/SO_project/master.c
 stdio.h
 -
 signal.h
@@ -27,20 +35,26 @@ unistd.h
 -
 sys/types.h
 -
+sys/ipc.h
+-
 sys/wait.h
--
-strings.h
--
-sys/sem.h
 -
 sys/shm.h
 -
-shared_res.h
-/home/lorenzo/workspaces/CLionProjects/SO_project/shared_res.h
+sys/sem.h
+-
+string.h
+-
+env_operation.h
+/home/lorenzo/workspaces/CLionProjects/SO_project/env_operation.h
 player.h
 /home/lorenzo/workspaces/CLionProjects/SO_project/player.h
-error_handling.h
-/home/lorenzo/workspaces/CLionProjects/SO_project/error_handling.h
+shared_res.h
+/home/lorenzo/workspaces/CLionProjects/SO_project/shared_res.h
+pawn.h
+/home/lorenzo/workspaces/CLionProjects/SO_project/pawn.h
+
+/home/lorenzo/workspaces/CLionProjects/SO_project/pawn.h
 
 /home/lorenzo/workspaces/CLionProjects/SO_project/player.h
 

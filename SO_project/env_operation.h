@@ -70,6 +70,9 @@ void envReading(char **envp, env *environment) {
     if (SO_MIN_HOLD_NSEC_str == NULL)
         error("environment variable SO_MIN_HOLD_NSEC not set");
     environment->SO_MIN_HOLD_NSEC = atoi(SO_MIN_HOLD_NSEC_str);
+#ifdef DEBUG
+    printf("environment working");
+#endif
 }
 
 #endif
