@@ -7,4 +7,10 @@ typedef struct {
     int *semMatrix;
 } table;
 
+typedef struct {
+    int value;
+    int xPos, yPos;
+    int taken;
+} flag;
+
 #endif //SO_PROJECT_SHARED_RES_H
