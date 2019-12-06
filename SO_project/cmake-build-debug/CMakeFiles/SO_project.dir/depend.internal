@@ -10,8 +10,14 @@ CMakeFiles/SO_project.dir/master.c.o
  /home/lorenzo/workspaces/CLionProjects/SO_project/pawn.h
  /home/lorenzo/workspaces/CLionProjects/SO_project/player.h
  /home/lorenzo/workspaces/CLionProjects/SO_project/shared_res.h
+CMakeFiles/SO_project.dir/pawn.c.o
+ /home/lorenzo/workspaces/CLionProjects/SO_project/error_handling.h
+ /home/lorenzo/workspaces/CLionProjects/SO_project/pawn.c
+ /home/lorenzo/workspaces/CLionProjects/SO_project/pawn.h
+ /home/lorenzo/workspaces/CLionProjects/SO_project/shared_res.h
 CMakeFiles/SO_project.dir/player.c.o
  /home/lorenzo/workspaces/CLionProjects/SO_project/error_handling.h
+ /home/lorenzo/workspaces/CLionProjects/SO_project/pawn.h
  /home/lorenzo/workspaces/CLionProjects/SO_project/player.c
  /home/lorenzo/workspaces/CLionProjects/SO_project/player.h
  /home/lorenzo/workspaces/CLionProjects/SO_project/shared_res.h

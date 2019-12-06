@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/SO_project.dir/error_handling.c.o"
   "CMakeFiles/SO_project.dir/master.c.o"
+  "CMakeFiles/SO_project.dir/pawn.c.o"
   "CMakeFiles/SO_project.dir/player.c.o"
   "SO_project"
   "SO_project.pdb"

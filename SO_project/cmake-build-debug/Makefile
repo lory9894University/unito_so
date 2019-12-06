@@ -39,10 +39,10 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /snap/clion/97/bin/cmake/linux/bin/cmake
+CMAKE_COMMAND = /snap/clion/98/bin/cmake/linux/bin/cmake
 
 # The command to remove a file.
-RM = /snap/clion/97/bin/cmake/linux/bin/cmake -E remove -f
+RM = /snap/clion/98/bin/cmake/linux/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home/lorenzo/workspaces/CLionProjects/SO_project/cmake-build
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/snap/clion/97/bin/cmake/linux/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/snap/clion/98/bin/cmake/linux/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -70,7 +70,7 @@ rebuild_cache/fast: rebuild_cache
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/snap/clion/97/bin/cmake/linux/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	/snap/clion/98/bin/cmake/linux/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -177,6 +177,33 @@ master.c.s:
 	$(MAKE) -f CMakeFiles/SO_project.dir/build.make CMakeFiles/SO_project.dir/master.c.s
 .PHONY : master.c.s
 
+pawn.o: pawn.c.o
+
+.PHONY : pawn.o
+
+# target to build an object file
+pawn.c.o:
+	$(MAKE) -f CMakeFiles/SO_project.dir/build.make CMakeFiles/SO_project.dir/pawn.c.o
+.PHONY : pawn.c.o
+
+pawn.i: pawn.c.i
+
+.PHONY : pawn.i
+
+# target to preprocess a source file
+pawn.c.i:
+	$(MAKE) -f CMakeFiles/SO_project.dir/build.make CMakeFiles/SO_project.dir/pawn.c.i
+.PHONY : pawn.c.i
+
+pawn.s: pawn.c.s
+
+.PHONY : pawn.s
+
+# target to generate assembly for a file
+pawn.c.s:
+	$(MAKE) -f CMakeFiles/SO_project.dir/build.make CMakeFiles/SO_project.dir/pawn.c.s
+.PHONY : pawn.c.s
+
 player.o: player.c.o
 
 .PHONY : player.o
@@ -219,6 +246,9 @@ help:
 	@echo "... master.o"
 	@echo "... master.i"
 	@echo "... master.s"
+	@echo "... pawn.o"
+	@echo "... pawn.i"
+	@echo "... pawn.s"
 	@echo "... player.o"
 	@echo "... player.i"
 	@echo "... player.s"
