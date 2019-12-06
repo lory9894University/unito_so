@@ -24,7 +24,7 @@ table *tableCreation(int base, int height) {
     int i, j;
 
     /*shared memory creation*/
-    shmId = shmget(IPC_PRIVATE, sizeof(table), 0660);
+    shmId = shmget(IPC_PRIVATE, sizeof(table), 0777);
     //TODO: come cazzo si usa IPC_EXCL?
     test_error();
     myTable = shmat(shmId, NULL, 0);
@@ -36,7 +36,7 @@ table *tableCreation(int base, int height) {
     myTable->semMatrix = malloc(sizeof(int) * height);
     for (i = 0; i < height; ++i) {
         myTable->matrix[i] = malloc(sizeof(char) * base);
-        myTable->semMatrix[i] = semget(IPC_PRIVATE, base, 0600);;
+        myTable->semMatrix[i] = semget(IPC_PRIVATE, base, 0777);;
         for (j = 0; j < base; ++j) {
             myTable->matrix[i][j] = ' ';
             semctl(myTable->semMatrix[i], j, SETVAL, 1);
@@ -77,8 +77,7 @@ flag *flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScor
     flagNotValued = flagNum = ((rand() % (maxFlag - (minFlag - 1))) + minFlag);
     flags = malloc(sizeof(flag) * flagNum);
 
-    /*todo: posizionamento delle bandiere sulla matrice schacchiera.
-    i giocatori devono sapere il valore della bandiera?*/
+    /*i giocatori devono sapere il valore della bandiera?*/
     for (i = 0; i < flagNum; ++i) {
         /*flag value randomly assigned*/
         flags[i].value = (rand() % (roundScore - flagNotValued--) + 1);
@@ -97,11 +96,11 @@ flag *flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScor
             }
         }
 
-        X = (int) postionXY / gameTable->base;
-        Y = (int) postionXY % gameTable->base;
+        Y = (int) postionXY / gameTable->base;
+        X = (int) postionXY % gameTable->base;
         flags[i].xPos = X;
         flags[i].yPos = Y;
-        gameTable->matrix[X][Y] = 'F';
+        gameTable->matrix[Y][X] = 'F';
     }
 }
 
@@ -113,9 +112,6 @@ pid_t *playersCreation(int numPlayers, int numPawn) {
     for (i = 0; i < numPlayers && forkVal != 0; ++i) {
         forkVal = fork();
         if (forkVal == 0) {
-#ifdef DEBUG
-            fprintf(stderr, "pid: %d , i'm a child\n", getpid());
-#endif
             playerBirth(numPawn);
         } else /*father actions*/
             players[i] = forkVal;
@@ -141,11 +137,13 @@ int main(int argc, char **argv, char **envp) {
     envReading(envp, &environment);
     sharedTable = tableCreation(environment.SO_BASE, environment.SO_ALTEZZA);
     flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX, environment.SO_ROUND_SCORE);
-    printState(*sharedTable);
-    playersCreation(environment.SO_NUM_G, environment.SO_NUM_G);
+    //printState(*sharedTable);
+    printf("%p\n", sharedTable);
+    playersCreation(environment.SO_NUM_G, environment.SO_NUM_P);
 
     /*cleanig what is left*/
     while (wait(NULL) != -1);
+    printState(*sharedTable);
     for (i = 0; i < environment.SO_ALTEZZA; ++i) {
         semctl(sharedTable->semMatrix[i], 0, IPC_RMID);
     }

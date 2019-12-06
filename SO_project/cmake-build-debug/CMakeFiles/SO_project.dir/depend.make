@@ -10,7 +10,13 @@ CMakeFiles/SO_project.dir/master.c.o: ../pawn.h
 CMakeFiles/SO_project.dir/master.c.o: ../player.h
 CMakeFiles/SO_project.dir/master.c.o: ../shared_res.h
 
+CMakeFiles/SO_project.dir/pawn.c.o: ../error_handling.h
+CMakeFiles/SO_project.dir/pawn.c.o: ../pawn.c
+CMakeFiles/SO_project.dir/pawn.c.o: ../pawn.h
+CMakeFiles/SO_project.dir/pawn.c.o: ../shared_res.h
+
 CMakeFiles/SO_project.dir/player.c.o: ../error_handling.h
+CMakeFiles/SO_project.dir/player.c.o: ../pawn.h
 CMakeFiles/SO_project.dir/player.c.o: ../player.c
 CMakeFiles/SO_project.dir/player.c.o: ../player.h
 CMakeFiles/SO_project.dir/player.c.o: ../shared_res.h

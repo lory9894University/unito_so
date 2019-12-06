@@ -90,6 +90,9 @@
 		<Unit filename="/home/lorenzo/workspaces/CLionProjects/SO_project/master.c">
 			<Option target="SO_project"/>
 		</Unit>
+		<Unit filename="/home/lorenzo/workspaces/CLionProjects/SO_project/pawn.c">
+			<Option target="SO_project"/>
+		</Unit>
 		<Unit filename="/home/lorenzo/workspaces/CLionProjects/SO_project/pawn.h">
 			<Option target="SO_project"/>
 		</Unit>
