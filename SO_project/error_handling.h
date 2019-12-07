@@ -8,10 +8,16 @@
 #include <string.h>
 #include <errno.h>
 
-void error(char *errorString);
+#define TEST_ERROR if (errno) {dprintf(STDERR_FILENO,        \
+                      "%s:%d: PID=%5d: Error %d (%s)\n", \
+                      __FILE__,            \
+                      __LINE__,            \
+                      getpid(),            \
+                      errno,            \
+                      strerror(errno));}
+//macro scritta prof. Bini, mi sembra corretto specificarlo //TODO: lo lascio sto commento?
 
-void test_error();
-
+#define GEN_ERROR printf("error: %s", errorString); exit(1);
 
 #endif //SO_PROJECT_ERROR_HANDLING
 

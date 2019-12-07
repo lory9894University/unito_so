@@ -81,9 +81,6 @@
 		<Unit filename="/home/lorenzo/workspaces/CLionProjects/SO_project/env_operation.h">
 			<Option target="SO_project"/>
 		</Unit>
-		<Unit filename="/home/lorenzo/workspaces/CLionProjects/SO_project/error_handling.c">
-			<Option target="SO_project"/>
-		</Unit>
 		<Unit filename="/home/lorenzo/workspaces/CLionProjects/SO_project/error_handling.h">
 			<Option target="SO_project"/>
 		</Unit>

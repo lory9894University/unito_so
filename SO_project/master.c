@@ -22,21 +22,24 @@ int shmId;
 table *tableCreation(int base, int height) {
     table *myTable;
     int i, j;
+    int sizeMatrix;
 
     /*shared memory creation*/
-    shmId = shmget(IPC_PRIVATE, sizeof(table), 0777);
+    shmId = shmget(IPC_PRIVATE, sizeof(table), 0600);
     //TODO: come cazzo si usa IPC_EXCL?
-    test_error();
+    TEST_ERROR;
     myTable = shmat(shmId, NULL, 0);
-    test_error();
+    TEST_ERROR;
     //game table definition
     myTable->base = base;
     myTable->height = height;
-    myTable->matrix = malloc(sizeof(char *) * height);
-    myTable->semMatrix = malloc(sizeof(int) * height);
+    sizeMatrix = height * (sizeof(void *) + (base * sizeof(char)));
+    //todo:sto allocando nell'heap (malloc) non nella memoria comune
+    myTable->matrix = shmat(shmget(IPC_PRIVATE, sizeof(int) * height, 0600), NULL, 0);
+    myTable->semMatrix = shmat(shmget(IPC_PRIVATE, sizeof(int) * height, 0600), NULL, 0);
     for (i = 0; i < height; ++i) {
-        myTable->matrix[i] = malloc(sizeof(char) * base);
-        myTable->semMatrix[i] = semget(IPC_PRIVATE, base, 0777);;
+        myTable->matrix[i] = shmat(shmget(IPC_PRIVATE, sizeof(int) * base, 0600), NULL, 0);
+        myTable->semMatrix[i] = semget(IPC_PRIVATE, base, 0600);;
         for (j = 0; j < base; ++j) {
             myTable->matrix[i][j] = ' ';
             semctl(myTable->semMatrix[i], j, SETVAL, 1);
@@ -138,7 +141,6 @@ int main(int argc, char **argv, char **envp) {
     sharedTable = tableCreation(environment.SO_BASE, environment.SO_ALTEZZA);
     flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX, environment.SO_ROUND_SCORE);
     //printState(*sharedTable);
-    printf("%p\n", sharedTable);
     playersCreation(environment.SO_NUM_G, environment.SO_NUM_P);
 
     /*cleanig what is left*/
