@@ -11,15 +11,21 @@
 #include <sys/sem.h>
 #include <string.h>
 
-#define DEBUG
+//#define DEBUG
 
 extern int shmId;/*processes already have in their stack the id of the shared mem*/
 table *sharedTable;
 
 void pawnHandler() {
+    int i;
 #ifdef DEBUG
-    printf("pawn: game finished, exiting\n");
+    printf("%d pawn: game finished, exiting\n",getpid());
 #endif
+    for (i = 0; i < sharedTable->height; ++i) {
+        shmdt(sharedTable->matrix[i]);
+    }
+    shmdt(sharedTable->semMatrix);
+    shmdt(sharedTable->matrix);
     shmdt(sharedTable);
     exit(0);
 }
@@ -33,10 +39,9 @@ pid_t createPawn(int posX, int posY) {
     sa.sa_handler = pawnHandler;
     sigaction(SIGUSR1, &sa, NULL);
 
-    sharedTable = shmat(shmId, NULL, 0);
-    test_error();
-    printf("%p\n", sharedTable);
-
+    sharedTable = shmat(shmId, NULL,
+                        0);//TODO: questo costrutto è veramente necessario? il puntatore a sharedTable è già nell'heap
+    TEST_ERROR;
 
     thisPawn.positionX = posX;
     thisPawn.positionY = posY;

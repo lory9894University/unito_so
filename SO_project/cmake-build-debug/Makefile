@@ -123,33 +123,6 @@ SO_project/fast:
 	$(MAKE) -f CMakeFiles/SO_project.dir/build.make CMakeFiles/SO_project.dir/build
 .PHONY : SO_project/fast
 
-error_handling.o: error_handling.c.o
-
-.PHONY : error_handling.o
-
-# target to build an object file
-error_handling.c.o:
-	$(MAKE) -f CMakeFiles/SO_project.dir/build.make CMakeFiles/SO_project.dir/error_handling.c.o
-.PHONY : error_handling.c.o
-
-error_handling.i: error_handling.c.i
-
-.PHONY : error_handling.i
-
-# target to preprocess a source file
-error_handling.c.i:
-	$(MAKE) -f CMakeFiles/SO_project.dir/build.make CMakeFiles/SO_project.dir/error_handling.c.i
-.PHONY : error_handling.c.i
-
-error_handling.s: error_handling.c.s
-
-.PHONY : error_handling.s
-
-# target to generate assembly for a file
-error_handling.c.s:
-	$(MAKE) -f CMakeFiles/SO_project.dir/build.make CMakeFiles/SO_project.dir/error_handling.c.s
-.PHONY : error_handling.c.s
-
 master.o: master.c.o
 
 .PHONY : master.o
@@ -240,9 +213,6 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... SO_project"
 	@echo "... edit_cache"
-	@echo "... error_handling.o"
-	@echo "... error_handling.i"
-	@echo "... error_handling.s"
 	@echo "... master.o"
 	@echo "... master.i"
 	@echo "... master.s"

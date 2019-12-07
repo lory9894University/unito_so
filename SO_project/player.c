@@ -16,18 +16,24 @@
 //#define DEBUG
 
 extern int shmId;/*processes already have in their stack the id of the shared mem*/
-table *sharedTable;
+extern table *sharedTable;
 
 void playerHandler() {
+    int i;
+#ifdef DEBUG
     int childPid = 0;
     int status = 0;
-#ifdef DEBUG
-    printf("player: game finished, waiting child and exiting\n");
+    printf("%d player: game finished, waiting child and exiting\n", getpid());
     while ((childPid=wait(&status)) != -1)
         dprintf(2,"PID=%d. Sender (PID=%d) terminated with status %d\n",getpid(),childPid,WEXITSTATUS(status));
 #else
     while (wait(NULL) != -1);
 #endif
+    for (i = 0; i < sharedTable->height; ++i) {
+        shmdt(sharedTable->matrix[i]);
+    }
+    shmdt(sharedTable->semMatrix);
+    shmdt(sharedTable->matrix);
     shmdt(sharedTable);
     exit(0);
 }
@@ -69,8 +75,9 @@ void playerBirth(int pawnNumber) {
     bzero(&sa, sizeof(sa));
     sa.sa_handler = playerHandler;
     sigaction(SIGUSR1, &sa, NULL);
-    sharedTable = shmat(shmId, NULL, 0);
-    test_error();
+    sharedTable = shmat(shmId, NULL,
+                        0); //TODO: questo costrutto è veramente necessario? il puntatore a sharedTable è già nell'heap
+    TEST_ERROR;
 
     pawnArray = malloc(sizeof(pid_t) * pawnNumber);
     for (i = 0; i < pawnNumber && forkValue != 0; ++i) {

@@ -12,11 +12,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="811d5f64-8ed6-44b4-baec-dea2c20a2ee4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/pawn.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile.cmake" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/C.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/C.includecache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/DependInfo.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/DependInfo.cmake" afterDir="false" />
@@ -28,13 +25,15 @@
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/master.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/master.c.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/player.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/player.c.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/progress.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/progress.make" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/progress.marks" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/progress.marks" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Makefile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/SO_project" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/SO_project" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/SO_project.cbp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/SO_project.cbp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/env_operation.h" beforeDir="false" afterPath="$PROJECT_DIR$/env_operation.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/error_handling.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/error_handling.h" beforeDir="false" afterPath="$PROJECT_DIR$/error_handling.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/master.c" beforeDir="false" afterPath="$PROJECT_DIR$/master.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pawn.h" beforeDir="false" afterPath="$PROJECT_DIR$/pawn.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pawn.c" beforeDir="false" afterPath="$PROJECT_DIR$/pawn.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/player.c" beforeDir="false" afterPath="$PROJECT_DIR$/player.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -74,9 +73,8 @@
   <component name="RunManager">
     <configuration name="SO_project" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SO_project" TARGET_NAME="SO_project" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SO_project" RUN_TARGET_NAME="SO_project">
       <envs>
-        <env name="SO_NUM_G" value="1" />
+        <env name="SO_NUM_G" value="2" />
         <env name="SO_NUM_P" value="10" />
-        <env name="SO_MAX_TIME" value="3" />
         <env name="SO_BASE" value="60" />
         <env name="SO_ALTEZZA" value="20" />
         <env name="SO_FLAG_MIN" value="5" />
@@ -84,6 +82,7 @@
         <env name="SO_ROUND_SCORE" value="10" />
         <env name="SO_N_MOVES" value="20" />
         <env name="SO_MIN_HOLD_NSEC" value="100000000" />
+        <env name="SO_MAX_TIME" value="3" />
       </envs>
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -138,7 +137,9 @@
       <workItem from="1575230375486" duration="1850000" />
       <workItem from="1575292977802" duration="102000" />
       <workItem from="1575396902196" duration="268000" />
-      <workItem from="1575654797039" duration="7858000" />
+      <workItem from="1575654797039" duration="7923000" />
+      <workItem from="1575663507204" duration="1231000" />
+      <workItem from="1575706897411" duration="4438000" />
     </task>
     <task id="LOCAL-00001">
       <created>1575125078810</created>
@@ -168,7 +169,14 @@
       <option name="project" value="LOCAL" />
       <updated>1575234688867</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="pawn cannot write in shared memory and i don't know why">
+      <created>1575663239485</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1575663239486</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -177,17 +185,18 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <MESSAGE value="working copy" />
-    <option name="LAST_COMMIT_MESSAGE" value="working copy" />
+    <MESSAGE value="pawn cannot write in shared memory and i don't know why" />
+    <option name="LAST_COMMIT_MESSAGE" value="pawn cannot write in shared memory and i don't know why" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="1987" y="27" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1575660945109">
+    <state x="1987" y="27" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1575710095528">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2371" y="211" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.27.3840.1053@0.27.3840.1053" timestamp="1575123855008" />
-    <state x="1987" y="27" key="#com.intellij.execution.impl.EditConfigurationsDialog/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575660945109" />
+    <state x="1987" y="27" key="#com.intellij.execution.impl.EditConfigurationsDialog/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575710095528" />
     <state x="729" y="391" width="518" height="332" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog" timestamp="1575293062181">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
@@ -200,64 +209,64 @@
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2649" y="409" width="518" height="295" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575196059477" />
-    <state x="2949" y="126" width="881" height="814" key="CommitChangelistDialog2" timestamp="1575663237675">
+    <state x="2949" y="126" width="881" height="814" key="CommitChangelistDialog2" timestamp="1575711664068">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2402" y="150" width="1012" height="814" key="CommitChangelistDialog2/0.27.3840.1053@0.27.3840.1053" timestamp="1575125074572" />
-    <state x="2949" y="126" width="881" height="814" key="CommitChangelistDialog2/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575663237675" />
-    <state x="2561" y="238" width="309" height="499" key="EnvironmentVariablesDialog" timestamp="1575660943347">
+    <state x="2949" y="126" width="881" height="814" key="CommitChangelistDialog2/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575711664068" />
+    <state x="2561" y="238" width="309" height="499" key="EnvironmentVariablesDialog" timestamp="1575710094083">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2650" y="317" width="515" height="479" key="EnvironmentVariablesDialog/0.27.3840.1053@0.27.3840.1053" timestamp="1575123852804" />
-    <state x="2561" y="238" width="309" height="499" key="EnvironmentVariablesDialog/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575660943346" />
+    <state x="2561" y="238" width="309" height="499" key="EnvironmentVariablesDialog/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575710094083" />
     <state x="761" y="301" width="444" height="520" key="FileChooserDialogImpl" timestamp="1575293060338">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="761" y="301" width="444" height="520" key="FileChooserDialogImpl/67.27.1853.1053@67.27.1853.1053" timestamp="1575293060338" />
-    <state width="1807" height="274" key="GridCell.Tab.0.bottom" timestamp="1575663182556">
+    <state width="1807" height="274" key="GridCell.Tab.0.bottom" timestamp="1575711144222">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.0.bottom/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
     <state width="1874" height="283" key="GridCell.Tab.0.bottom/1920.0.1920.1080/0.27.1920.1053@0.27.1920.1053" timestamp="1575397169573" />
-    <state width="1807" height="274" key="GridCell.Tab.0.bottom/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575663182556" />
-    <state width="1807" height="274" key="GridCell.Tab.0.center" timestamp="1575663182556">
+    <state width="1807" height="274" key="GridCell.Tab.0.bottom/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575711144222" />
+    <state width="1807" height="274" key="GridCell.Tab.0.center" timestamp="1575711144222">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.0.center/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
     <state width="1874" height="283" key="GridCell.Tab.0.center/1920.0.1920.1080/0.27.1920.1053@0.27.1920.1053" timestamp="1575397169573" />
-    <state width="1807" height="274" key="GridCell.Tab.0.center/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575663182556" />
-    <state width="1807" height="274" key="GridCell.Tab.0.left" timestamp="1575663182556">
+    <state width="1807" height="274" key="GridCell.Tab.0.center/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575711144222" />
+    <state width="1807" height="274" key="GridCell.Tab.0.left" timestamp="1575711144222">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.0.left/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121336" />
     <state width="1874" height="283" key="GridCell.Tab.0.left/1920.0.1920.1080/0.27.1920.1053@0.27.1920.1053" timestamp="1575397169573" />
-    <state width="1807" height="274" key="GridCell.Tab.0.left/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575663182556" />
-    <state width="1807" height="274" key="GridCell.Tab.0.right" timestamp="1575663182556">
+    <state width="1807" height="274" key="GridCell.Tab.0.left/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575711144222" />
+    <state width="1807" height="274" key="GridCell.Tab.0.right" timestamp="1575711144222">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.0.right/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
     <state width="1874" height="283" key="GridCell.Tab.0.right/1920.0.1920.1080/0.27.1920.1053@0.27.1920.1053" timestamp="1575397169573" />
-    <state width="1807" height="274" key="GridCell.Tab.0.right/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575663182556" />
-    <state width="1807" height="340" key="GridCell.Tab.1.bottom" timestamp="1575661676733">
+    <state width="1807" height="274" key="GridCell.Tab.0.right/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575711144222" />
+    <state width="1807" height="340" key="GridCell.Tab.1.bottom" timestamp="1575663244972">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.1.bottom/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
-    <state width="1807" height="340" key="GridCell.Tab.1.bottom/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575661676733" />
-    <state width="1807" height="340" key="GridCell.Tab.1.center" timestamp="1575661676733">
+    <state width="1807" height="340" key="GridCell.Tab.1.bottom/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575663244972" />
+    <state width="1807" height="340" key="GridCell.Tab.1.center" timestamp="1575663244971">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.1.center/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
-    <state width="1807" height="340" key="GridCell.Tab.1.center/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575661676733" />
-    <state width="1807" height="340" key="GridCell.Tab.1.left" timestamp="1575661676733">
+    <state width="1807" height="340" key="GridCell.Tab.1.center/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575663244971" />
+    <state width="1807" height="340" key="GridCell.Tab.1.left" timestamp="1575663244971">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.1.left/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
-    <state width="1807" height="340" key="GridCell.Tab.1.left/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575661676733" />
-    <state width="1807" height="340" key="GridCell.Tab.1.right" timestamp="1575661676733">
+    <state width="1807" height="340" key="GridCell.Tab.1.left/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575663244971" />
+    <state width="1807" height="340" key="GridCell.Tab.1.right" timestamp="1575663244971">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.1.right/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
-    <state width="1807" height="340" key="GridCell.Tab.1.right/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575661676733" />
+    <state width="1807" height="340" key="GridCell.Tab.1.right/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575663244971" />
     <state width="926" height="526" key="XDebugger.FullValuePopup" timestamp="1575230983097">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
