@@ -40,6 +40,11 @@ pid_t createPawn(int posX, int posY) {
     sa.sa_handler = pawnHandler;
     sigaction(SIGUSR1, &sa, NULL);
 
+#ifdef DEBUG
+    fprintf(stderr, "pid: %d , i'm a pawn. created by %d\n", getpid(), getppid());
+    //sleep(10); /*thanks debugger*/
+#endif
+
     sharedTable = shmat(shmId, NULL,
                         0);//TODO: questo costrutto è veramente necessario? il puntatore a sharedTable è già nell'heap
     TEST_ERROR;

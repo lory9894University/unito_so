@@ -12,6 +12,7 @@
 #include "player.h"
 #include "error_handling.h"
 #include "pawn.h"
+
 #define DEBUG
 
 extern int shmId;/*processes already have in their stack the id of the shared mem*/
@@ -38,38 +39,18 @@ void playerHandler() {
     exit(0);
 }
 
-void placePawn(pid_t *pawns) {
-    int posX = 0, posY = 0, positionOccupied = 1;
-
-#ifdef DEBUG
-    fprintf(stderr, "pid: %d , i'm a pawn. created by %d\n", getpid(), getppid());
-    //sleep(10); /*thanks debugger*/
-#endif
-    /* casual positioning*/
-    /*todo: scrivere nella relazione il fatto che avrei voluto usare un algoritmo di hashing
-     * e disporre uniformemente le pedine sulla schacchiera, ma avrebbe senso solo programmando un giocatore singolo.
-     * dovendone programmare più essi otterrebbero tutti la stessa posizione e mi ritroverei con pedine affiancate*/
-    srand(getpid());
-    while (positionOccupied) {
-        posX = rand() % sharedTable->base;
-        posY = rand() % sharedTable->height;
-        if (sharedTable->matrix[posY][posX] == ' ')
-            positionOccupied = 0;
-    }
-    *pawns = createPawn(posX, posY);
-
-}
-
-void playerBirth(int pawnNumber, int numPlayer, int playersTot, int pawnSem) {
+pawn *playerBirth(int pawnNumber, int numPlayer, int playersTot, int pawnSem) {
     int i;
-    pid_t *pawnArray;
+    pawn *pawnArray;
     struct sigaction sa;
     int forkValue = -1;
+    int posX = 0, posY = 0, positionOccupied = 1;
 
     /*sigaction setting*/
     bzero(&sa, sizeof(sa));
     sa.sa_handler = playerHandler;
     sigaction(SIGUSR1, &sa, NULL);
+
 #ifdef DEBUG
     fprintf(stderr, "pid: %d , i'm a player\n", getpid());
     //sleep(10); /*thanks debugger*/
@@ -79,29 +60,81 @@ void playerBirth(int pawnNumber, int numPlayer, int playersTot, int pawnSem) {
                         0); //TODO: questo costrutto è veramente necessario? il puntatore a sharedTable è già nell'heap
     TEST_ERROR;
 
-    pawnArray = malloc(sizeof(pid_t) * pawnNumber);
+    /*pawn creation*/
+    pawnArray = malloc(sizeof(pawn) * pawnNumber);
+    srand(getpid());
     for (i = 0; i < pawnNumber && forkValue != 0; ++i) {
-        /*sem_getall(string,playerSem);
-        fprintf(stderr,"%s\n",string);*/
         semHandling(playerSem, numPlayer, RESERVE);
         TEST_ERROR
+        positionOccupied = 1;
+        while (positionOccupied) {
+            posX = rand() % sharedTable->base;
+            posY = rand() % sharedTable->height;
+            if (sharedTable->matrix[posY][posX] == ' ')
+                positionOccupied = 0;
+        }
         forkValue = fork();
         if (forkValue == 0) {
-            placePawn(&pawnArray[i]);
-        }
-        if (forkValue == 0) {
+            createPawn(posX, posY);
             pawnLife();
+        } else {
+            pawnArray[i].pid = forkValue;
+            pawnArray[i].positionY = posY;
+            pawnArray[i].positionX = posX;
+            pawnArray[i].objectiveX = -1;
+            pawnArray[i].objectiveY = -1;
         }
         semHandling(playerSem, numPlayer == playersTot - 1 ? 0 : numPlayer + 1, RELEASE);
         TEST_ERROR
     }
 
     semHandling(pawnSem, 0, RESERVE);
+    return pawnArray;
 }
 
-void playerLife() {
+void playerLife(pawn *pawnArray, int pawnNumber) {
+    flag *flags;
+    extern int flagShm;
+
+    flags = shmat(flagShm, NULL, 0);
     while (1) {
+        /*todo: nella relazione scrivere chè è inutile fornire un "backup plan" nel caso una pedina raggiunga una flag, in modo che ne cerchi un'altra
+         * le pedine sono moltissime e le flag poche (rapporto medio 5:1 per ogni giocatore), tale implementazione richiederebbe tantissimo tempo di cpu (un signal ed un pipe)
+         * andando a rallentare la velocità di esecuzione dei processi pedina, aumentando inutilmente il il numero di mosse utilizzate (metro di valutazione)
+         * una pedina NON può prendere 2 bandiere, è statisticamente assurdo
+         * aggiunta: la pedina sta in ascolto del master, se la sua pedina obbiettivo è presa si ferma*/
+        /*todo: lettura posizione pedine*/
 
     }
 }
 
+void objectives(flag *flags, pawn *pawnArray, int pawnNumber) {
+    int i, j;
+    int bestFlag = -1, distanceBest, distanceLocal = 0;
+    int *flagObjective;
+    extern int flagNum;
+
+    flagObjective = malloc(sizeof(int) * flagNum);
+    for (i = 0; i < flagNum; ++i) {
+        flagObjective[i] = 0;
+    }
+    for (i = 0; i < pawnNumber; ++i) {
+        distanceBest = 0;
+        for (j = 0; j < flagNum; ++j) {
+            distanceLocal = (pawnArray[i].positionX - flags[j].xPos) + (pawnArray[i].positionY - flags[j].yPos);
+            if ((distanceLocal < distanceBest || distanceBest == 0)) {
+                distanceBest = distanceLocal;
+                bestFlag = j;
+                flagObjective[j] = 0;
+            }
+            pawnArray[i].objectiveX = flags[bestFlag].xPos;
+            pawnArray[i].objectiveY = flags[bestFlag].yPos;
+            /*todo: occhio che glieli devi ancora passare alla pedina, magari tramite un pipe, o un msg*/
+        }
+    }
+    for (i = 0; i < flagNum; ++i) {
+        for (j = 0; j < pawnNumber; ++j) {
+
+        }
+    }
+}
