@@ -18,6 +18,7 @@
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/player.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/SO_project.dir/player.c.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/SO_project" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/SO_project" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/master.c" beforeDir="false" afterPath="$PROJECT_DIR$/master.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pawn.c" beforeDir="false" afterPath="$PROJECT_DIR$/pawn.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/player.c" beforeDir="false" afterPath="$PROJECT_DIR$/player.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/player.h" beforeDir="false" afterPath="$PROJECT_DIR$/player.h" afterDir="false" />
     </list>
@@ -127,7 +128,7 @@
       <workItem from="1575706897411" duration="10857000" />
       <workItem from="1575967027690" duration="5788000" />
       <workItem from="1575975494050" duration="700000" />
-      <workItem from="1575983191654" duration="2124000" />
+      <workItem from="1575983191654" duration="9156000" />
     </task>
     <task id="LOCAL-00001">
       <created>1575125078810</created>
@@ -171,7 +172,14 @@
       <option name="project" value="LOCAL" />
       <updated>1575711665730</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="synced and cleaned that fucking memory left, let's get down to business">
+      <created>1575985420856</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1575985420856</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -183,7 +191,8 @@
     <MESSAGE value="pawn cannot write in shared memory and i don't know why" />
     <MESSAGE value="shared mem works, but fuck it doesn't clean" />
     <MESSAGE value="shared mem works, but fuck it doesn't clean&#10;+ eliminated err_handling.c" />
-    <option name="LAST_COMMIT_MESSAGE" value="shared mem works, but fuck it doesn't clean&#10;+ eliminated err_handling.c" />
+    <MESSAGE value="synced and cleaned that fucking memory left, let's get down to business" />
+    <option name="LAST_COMMIT_MESSAGE" value="synced and cleaned that fucking memory left, let's get down to business" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -206,11 +215,11 @@
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2649" y="409" width="518" height="295" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575196059477" />
-    <state x="2949" y="126" width="881" height="814" key="CommitChangelistDialog2" timestamp="1575976256518">
+    <state x="2949" y="126" width="881" height="814" key="CommitChangelistDialog2" timestamp="1575994857817">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2402" y="150" width="1012" height="814" key="CommitChangelistDialog2/0.27.3840.1053@0.27.3840.1053" timestamp="1575125074572" />
-    <state x="2949" y="126" width="881" height="814" key="CommitChangelistDialog2/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575976256518" />
+    <state x="2949" y="126" width="881" height="814" key="CommitChangelistDialog2/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575994857817" />
     <state x="2561" y="238" width="309" height="513" key="EnvironmentVariablesDialog" timestamp="1575728191948">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
@@ -220,30 +229,30 @@
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="761" y="301" width="444" height="520" key="FileChooserDialogImpl/67.27.1853.1053@67.27.1853.1053" timestamp="1575293060338" />
-    <state width="1807" height="274" key="GridCell.Tab.0.bottom" timestamp="1575985317490">
+    <state width="1807" height="274" key="GridCell.Tab.0.bottom" timestamp="1575994314561">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.0.bottom/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
     <state width="1874" height="283" key="GridCell.Tab.0.bottom/1920.0.1920.1080/0.27.1920.1053@0.27.1920.1053" timestamp="1575397169573" />
-    <state width="1807" height="274" key="GridCell.Tab.0.bottom/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575985317490" />
-    <state width="1807" height="274" key="GridCell.Tab.0.center" timestamp="1575985317490">
+    <state width="1807" height="274" key="GridCell.Tab.0.bottom/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575994314561" />
+    <state width="1807" height="274" key="GridCell.Tab.0.center" timestamp="1575994314561">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.0.center/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
     <state width="1874" height="283" key="GridCell.Tab.0.center/1920.0.1920.1080/0.27.1920.1053@0.27.1920.1053" timestamp="1575397169573" />
-    <state width="1807" height="274" key="GridCell.Tab.0.center/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575985317490" />
-    <state width="1807" height="274" key="GridCell.Tab.0.left" timestamp="1575985317490">
+    <state width="1807" height="274" key="GridCell.Tab.0.center/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575994314561" />
+    <state width="1807" height="274" key="GridCell.Tab.0.left" timestamp="1575994314561">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.0.left/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121336" />
     <state width="1874" height="283" key="GridCell.Tab.0.left/1920.0.1920.1080/0.27.1920.1053@0.27.1920.1053" timestamp="1575397169573" />
-    <state width="1807" height="274" key="GridCell.Tab.0.left/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575985317490" />
-    <state width="1807" height="274" key="GridCell.Tab.0.right" timestamp="1575985317490">
+    <state width="1807" height="274" key="GridCell.Tab.0.left/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575994314561" />
+    <state width="1807" height="274" key="GridCell.Tab.0.right" timestamp="1575994314561">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.0.right/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
     <state width="1874" height="283" key="GridCell.Tab.0.right/1920.0.1920.1080/0.27.1920.1053@0.27.1920.1053" timestamp="1575397169573" />
-    <state width="1807" height="274" key="GridCell.Tab.0.right/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575985317490" />
+    <state width="1807" height="274" key="GridCell.Tab.0.right/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1575994314561" />
     <state width="1807" height="340" key="GridCell.Tab.1.bottom" timestamp="1575984630026">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>

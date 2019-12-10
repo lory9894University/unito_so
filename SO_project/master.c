@@ -15,8 +15,7 @@
 #include "pawn.h"
 //#define DEBUG
 
-int shmId;
-int playerSem;
+int shmId, playerSem, flagShm, flagNum;
 env environment;
 table *sharedTable;
 pid_t *players;
@@ -28,7 +27,6 @@ table *tableCreation(int base, int height) {
 
     /*shared memory creation*/
     shmId = shmget(IPC_PRIVATE, sizeof(table), 0600);
-    //TODO: come cazzo si usa IPC_EXCL?
     TEST_ERROR;
     myTable = shmat(shmId, NULL, 0);
     TEST_ERROR;
@@ -77,14 +75,15 @@ void printState(
 }
 
 flag *flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScore) {
-    int flagNum, flagNotValued;
+    int flagNotValued;
     int X, Y, positionOccupied;
     int i;
     flag *flags;
 
     srand(getpid());
     flagNotValued = flagNum = ((rand() % (maxFlag - (minFlag - 1))) + minFlag);
-    flags = malloc(sizeof(flag) * flagNum);
+    flagShm = shmget(IPC_PRIVATE, sizeof(flag) * flagNum, 0600);
+    flags = shmat(flagShm, NULL, 0);
 
     /*i giocatori devono sapere il valore della bandiera?*/
     for (i = 0; i < flagNum; ++i) {
@@ -113,7 +112,9 @@ pid_t *playersCreation(int numPlayers, int numPawn) {
     int i = 0, forkVal = -1;
     pid_t *players;
     int placePawnSem;
+    pawn *playerPawnArray;
 
+    playerPawnArray = malloc(sizeof(pawn) * numPawn);
     placePawnSem = semget(IPC_PRIVATE, 1, 0600);
     TEST_ERROR
     semctl(placePawnSem, 0, SETVAL, numPlayers);
@@ -129,12 +130,12 @@ pid_t *playersCreation(int numPlayers, int numPawn) {
     for (i = 0; i < numPlayers && forkVal != 0; ++i) {
         forkVal = fork();
         if (forkVal == 0) {
-            playerBirth(numPawn, i, numPlayers, placePawnSem);
+            playerPawnArray = playerBirth(numPawn, i, numPlayers, placePawnSem);
         } else /*father actions*/
             players[i] = forkVal;
     }
     if (forkVal == 0) {
-        playerLife();
+        playerLife(playerPawnArray, numPawn);
     }
 
     /*wait for every player to place his pawns*/
@@ -152,11 +153,8 @@ void endGame(int numPlayers, pid_t *players) {
 
 void clean(env environment, table *sharedTable, pid_t *players) {
     int i;
-    int tempId;
     for (i = 0; i < environment.SO_NUM_G; ++i) {
         semctl(playerSem, 0, IPC_RMID);
-        shmctl(tempId, IPC_RMID,
-               NULL); //TODO: o trovo il modo di risalire all'id dall'indirizzo o li elimino appena li creo
     }
     for (i = 0; i < environment.SO_ALTEZZA; ++i) {
         semctl(sharedTable->semMatrix[i], 0, IPC_RMID);
@@ -182,6 +180,7 @@ void alarmHandler() {
 int main(int argc, char **argv) {
     struct sigaction sa;
     int debug = 0;
+    flag *flags;
 
     /*sigaction setting*/
     bzero(&sa, sizeof(sa));
@@ -192,12 +191,16 @@ int main(int argc, char **argv) {
     setvbuf(stdout, NULL, _IONBF, 0);
     envReading(environ, &environment);
     sharedTable = tableCreation(environment.SO_BASE, environment.SO_ALTEZZA);
-    flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX, environment.SO_ROUND_SCORE);
+    flags = flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX, environment.SO_ROUND_SCORE);
     players = playersCreation(environment.SO_NUM_G, environment.SO_NUM_P);
+
 
     while (debug < 1) {
         debug++;
         alarm(environment.SO_MAX_TIME);
+        /* tu rimani in attesa di messaggi(aka le flag prese)
+         * quando tutte le flag sono state prese, riavvia il ciclo, superati i SO_MAX_TIME secondi parte l'handler
+         * */
         sleep(4);
     }
 
