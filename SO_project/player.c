@@ -60,21 +60,18 @@ void placePawn(pid_t *pawns) {
 
 }
 
-void playerBirth(int pawnNumber, int numPlayer, int playersTot) {
+void playerBirth(int pawnNumber, int numPlayer, int playersTot, int pawnSem) {
     int i;
     pid_t *pawnArray;
     struct sigaction sa;
     int forkValue = -1;
-    char *string;
 
-    string = malloc(sizeof(char) * 200);
     /*sigaction setting*/
     bzero(&sa, sizeof(sa));
     sa.sa_handler = playerHandler;
     sigaction(SIGUSR1, &sa, NULL);
 #ifdef DEBUG
     fprintf(stderr, "pid: %d , i'm a player\n", getpid());
-    printf("%d\n", playerSem);
     //sleep(10); /*thanks debugger*/
     //printf("%d ", shmId);
 #endif
@@ -99,7 +96,7 @@ void playerBirth(int pawnNumber, int numPlayer, int playersTot) {
         TEST_ERROR
     }
 
-
+    semHandling(pawnSem, 0, RESERVE);
 }
 
 void playerLife() {

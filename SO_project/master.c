@@ -13,16 +13,18 @@
 #include "player.h"
 #include "shared_res.h"
 #include "pawn.h"
-
 //#define DEBUG
 
 int shmId;
 int playerSem;
+env environment;
+table *sharedTable;
+pid_t *players;
 
 table *tableCreation(int base, int height) {
     table *myTable;
     int i, j;
-    int sizeMatrix;
+    int shmTemp;
 
     /*shared memory creation*/
     shmId = shmget(IPC_PRIVATE, sizeof(table), 0600);
@@ -33,12 +35,16 @@ table *tableCreation(int base, int height) {
     //game table definition
     myTable->base = base;
     myTable->height = height;
-    sizeMatrix = height * (sizeof(void *) + (base * sizeof(char)));
-    //todo:sto allocando nell'heap (malloc) non nella memoria comune
-    myTable->matrix = shmat(shmget(IPC_PRIVATE, sizeof(int) * height, 0600), NULL, 0);
-    myTable->semMatrix = shmat(shmget(IPC_PRIVATE, sizeof(int) * height, 0600), NULL, 0);
+    shmTemp = shmget(IPC_PRIVATE, sizeof(int) * height, 0600);
+    myTable->matrix = shmat(shmTemp, NULL, 0);
+    shmctl(shmTemp, IPC_RMID, NULL);
+    shmTemp = shmget(IPC_PRIVATE, sizeof(int) * height, 0600);
+    myTable->semMatrix = shmat(shmTemp, NULL, 0);
+    shmctl(shmTemp, IPC_RMID, NULL);
     for (i = 0; i < height; ++i) {
-        myTable->matrix[i] = shmat(shmget(IPC_PRIVATE, sizeof(int) * base, 0600), NULL, 0);
+        shmTemp = shmget(IPC_PRIVATE, sizeof(int) * base, 0600);
+        myTable->matrix[i] = shmat(shmTemp, NULL, 0);
+        shmctl(shmTemp, IPC_RMID, NULL);
         myTable->semMatrix[i] = semget(IPC_PRIVATE, base, 0600);;
         for (j = 0; j < base; ++j) {
             myTable->matrix[i][j] = ' ';
@@ -72,8 +78,8 @@ void printState(
 
 flag *flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScore) {
     int flagNum, flagNotValued;
-    int postionXY, X, Y, positionOccupied;
-    int i, j;
+    int X, Y, positionOccupied;
+    int i;
     flag *flags;
 
     srand(getpid());
@@ -87,20 +93,16 @@ flag *flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScor
         roundScore -= flags[i].value;
         flags[i].taken = 0;
 
-        /*flag position randomly assigned, if the position is already occupied it calculate a nev postion*/
+        /*flag position randomly assigned, if the position is already occupied it calculate a nev position*/
         positionOccupied = 1;
         while (positionOccupied) {
-            postionXY = (rand() % (gameTable->base * gameTable->height));
+            X = rand() % gameTable->base;
+            Y = rand() % gameTable->height;
             positionOccupied = 0;
-            for (j = 0; j < (flagNum - flagNotValued) && !positionOccupied; ++j) {
-                if ((flags[j].xPos * flags[j].yPos) == postionXY) {
-                    positionOccupied = 1;
-                }
+            if (gameTable->matrix[Y][X] != ' ') {
+                positionOccupied = 1;
             }
         }
-
-        Y = (int) postionXY / gameTable->base;
-        X = (int) postionXY % gameTable->base;
         flags[i].xPos = X;
         flags[i].yPos = Y;
         gameTable->matrix[Y][X] = 'F';
@@ -110,6 +112,12 @@ flag *flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScor
 pid_t *playersCreation(int numPlayers, int numPawn) {
     int i = 0, forkVal = -1;
     pid_t *players;
+    int placePawnSem;
+
+    placePawnSem = semget(IPC_PRIVATE, 1, 0600);
+    TEST_ERROR
+    semctl(placePawnSem, 0, SETVAL, numPlayers);
+    TEST_ERROR
 
     playerSem = semget(IPC_PRIVATE, numPlayers, 0600);
     TEST_ERROR
@@ -121,7 +129,7 @@ pid_t *playersCreation(int numPlayers, int numPawn) {
     for (i = 0; i < numPlayers && forkVal != 0; ++i) {
         forkVal = fork();
         if (forkVal == 0) {
-            playerBirth(numPawn, i, numPlayers);
+            playerBirth(numPawn, i, numPlayers, placePawnSem);
         } else /*father actions*/
             players[i] = forkVal;
     }
@@ -129,6 +137,9 @@ pid_t *playersCreation(int numPlayers, int numPawn) {
         playerLife();
     }
 
+    /*wait for every player to place his pawns*/
+    semHandling(placePawnSem, 0, 0);
+    semctl(placePawnSem, 0, IPC_RMID);
     return players;
 }
 
@@ -139,27 +150,12 @@ void endGame(int numPlayers, pid_t *players) {
     }
 }
 
-int main(int argc, char **argv, char **envp) {
-    env environment;
-    table *sharedTable;
-    pid_t *players;
+void clean(env environment, table *sharedTable, pid_t *players) {
     int i;
-
-    setvbuf(stdout, NULL, _IONBF, 0);
-    envReading(envp, &environment);
-    sharedTable = tableCreation(environment.SO_BASE, environment.SO_ALTEZZA);
-    flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX, environment.SO_ROUND_SCORE);
-    //printState(*sharedTable);
-    players = playersCreation(environment.SO_NUM_G, environment.SO_NUM_P);
-
-    /*cleanig what is left*/
-    sleep(1);
-    endGame(environment.SO_NUM_G, players);
-    while (wait(NULL) != -1);
-    printState(*sharedTable);
+    int tempId;
     for (i = 0; i < environment.SO_NUM_G; ++i) {
         semctl(playerSem, 0, IPC_RMID);
-        shmctl(shmId, IPC_RMID,
+        shmctl(tempId, IPC_RMID,
                NULL); //TODO: o trovo il modo di risalire all'id dall'indirizzo o li elimino appena li creo
     }
     for (i = 0; i < environment.SO_ALTEZZA; ++i) {
@@ -170,5 +166,40 @@ int main(int argc, char **argv, char **envp) {
     shmdt(sharedTable->semMatrix);
     shmdt(sharedTable->matrix);
     shmdt(sharedTable);
+
+}
+
+void alarmHandler() {
+
+    endGame(environment.SO_NUM_G, players);
+    while (wait(NULL) != -1);
+    printState(*sharedTable);
+    clean(environment, sharedTable, players);
+
+    exit(0);
+}
+
+int main(int argc, char **argv) {
+    struct sigaction sa;
+    int debug = 0;
+
+    /*sigaction setting*/
+    bzero(&sa, sizeof(sa));
+    sa.sa_handler = alarmHandler;
+    sigaction(SIGALRM, &sa, NULL);
+
+    /*setting table*/
+    setvbuf(stdout, NULL, _IONBF, 0);
+    envReading(environ, &environment);
+    sharedTable = tableCreation(environment.SO_BASE, environment.SO_ALTEZZA);
+    flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX, environment.SO_ROUND_SCORE);
+    players = playersCreation(environment.SO_NUM_G, environment.SO_NUM_P);
+
+    while (debug < 1) {
+        debug++;
+        alarm(environment.SO_MAX_TIME);
+        sleep(4);
+    }
+
     return 0;
 }
