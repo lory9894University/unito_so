@@ -1,1 +1,1 @@
-/usr/bin/cc -g   CMakeFiles/SO_project.dir/master.c.o CMakeFiles/SO_project.dir/player.c.o CMakeFiles/SO_project.dir/pawn.c.o  -o SO_project 
+/usr/bin/cc -g   CMakeFiles/SO_project.dir/master.c.o CMakeFiles/SO_project.dir/player.c.o CMakeFiles/SO_project.dir/pawn.c.o CMakeFiles/SO_project.dir/shared_res.c.o  -o SO_project 

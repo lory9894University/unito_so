@@ -2,6 +2,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/SO_project.dir/master.c.o"
   "CMakeFiles/SO_project.dir/pawn.c.o"
   "CMakeFiles/SO_project.dir/player.c.o"
+  "CMakeFiles/SO_project.dir/shared_res.c.o"
   "SO_project"
   "SO_project.pdb"
 )

@@ -99,6 +99,9 @@
 		<Unit filename="/home/lorenzo/workspaces/CLionProjects/SO_project/player.h">
 			<Option target="SO_project"/>
 		</Unit>
+		<Unit filename="/home/lorenzo/workspaces/CLionProjects/SO_project/shared_res.c">
+			<Option target="SO_project"/>
+		</Unit>
 		<Unit filename="/home/lorenzo/workspaces/CLionProjects/SO_project/shared_res.h">
 			<Option target="SO_project"/>
 		</Unit>

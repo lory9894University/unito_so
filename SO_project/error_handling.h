@@ -1,6 +1,5 @@
 #ifndef SO_PROJECT_ERROR_HANDLING_H
 #define SO_PROJECT_ERROR_HANDLING_H
-
 #define _GNU_SOURCE
 
 #include <stdlib.h>
@@ -15,7 +14,7 @@
                       getpid(),            \
                       errno,            \
                       strerror(errno));}
-//macro scritta prof. Bini, mi sembra corretto specificarlo //TODO: lo lascio sto commento?
+//macro ricavata dalle dispense del prof. Bini, mi sembra corretto specificarlo //TODO: lo lascio sto commento?
 
 #define GEN_ERROR printf("error: %s", errorString); exit(1);
 

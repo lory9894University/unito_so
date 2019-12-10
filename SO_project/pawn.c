@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include "pawn.h"
 #include "shared_res.h"
 #include "error_handling.h"
@@ -11,7 +12,7 @@
 #include <sys/sem.h>
 #include <string.h>
 
-//#define DEBUG
+#define DEBUG
 
 extern int shmId;/*processes already have in their stack the id of the shared mem*/
 table *sharedTable;
@@ -48,9 +49,11 @@ pid_t createPawn(int posX, int posY) {
     thisPawn.pid = getpid();
 
     sharedTable->matrix[posY][posX] = 'T';
-#ifdef DEBUG
-    pawnHandler();
-#endif
+
     return thisPawn.pid;
 }
 
+void pawnLife() {
+
+    pawnHandler();
+}
