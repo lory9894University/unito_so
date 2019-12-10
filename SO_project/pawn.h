@@ -1,5 +1,6 @@
 #ifndef SO_PROJECT_PAWN_H
 #define SO_PROJECT_PAWN_H
+#define _GNU_SOURCE
 
 #include <signal.h>
 
@@ -11,5 +12,7 @@ typedef struct {
 } pawn;
 
 pid_t createPawn(int posX, int posY);
+
+void pawnLife();
 
 #endif //SO_PROJECT_PAWN_H

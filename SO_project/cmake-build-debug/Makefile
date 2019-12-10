@@ -204,6 +204,33 @@ player.c.s:
 	$(MAKE) -f CMakeFiles/SO_project.dir/build.make CMakeFiles/SO_project.dir/player.c.s
 .PHONY : player.c.s
 
+shared_res.o: shared_res.c.o
+
+.PHONY : shared_res.o
+
+# target to build an object file
+shared_res.c.o:
+	$(MAKE) -f CMakeFiles/SO_project.dir/build.make CMakeFiles/SO_project.dir/shared_res.c.o
+.PHONY : shared_res.c.o
+
+shared_res.i: shared_res.c.i
+
+.PHONY : shared_res.i
+
+# target to preprocess a source file
+shared_res.c.i:
+	$(MAKE) -f CMakeFiles/SO_project.dir/build.make CMakeFiles/SO_project.dir/shared_res.c.i
+.PHONY : shared_res.c.i
+
+shared_res.s: shared_res.c.s
+
+.PHONY : shared_res.s
+
+# target to generate assembly for a file
+shared_res.c.s:
+	$(MAKE) -f CMakeFiles/SO_project.dir/build.make CMakeFiles/SO_project.dir/shared_res.c.s
+.PHONY : shared_res.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -222,6 +249,9 @@ help:
 	@echo "... player.o"
 	@echo "... player.i"
 	@echo "... player.s"
+	@echo "... shared_res.o"
+	@echo "... shared_res.i"
+	@echo "... shared_res.s"
 .PHONY : help
 
 

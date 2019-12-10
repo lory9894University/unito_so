@@ -19,3 +19,7 @@ CMakeFiles/SO_project.dir/player.c.o
  /home/lorenzo/workspaces/CLionProjects/SO_project/player.c
  /home/lorenzo/workspaces/CLionProjects/SO_project/player.h
  /home/lorenzo/workspaces/CLionProjects/SO_project/shared_res.h
+CMakeFiles/SO_project.dir/shared_res.c.o
+ /home/lorenzo/workspaces/CLionProjects/SO_project/error_handling.h
+ /home/lorenzo/workspaces/CLionProjects/SO_project/shared_res.c
+ /home/lorenzo/workspaces/CLionProjects/SO_project/shared_res.h

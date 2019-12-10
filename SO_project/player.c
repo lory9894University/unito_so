@@ -1,5 +1,4 @@
 #define _GNU_SOURCE
-
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -13,10 +12,11 @@
 #include "player.h"
 #include "error_handling.h"
 #include "pawn.h"
-//#define DEBUG
+#define DEBUG
 
 extern int shmId;/*processes already have in their stack the id of the shared mem*/
 extern table *sharedTable;
+extern int playerSem;
 
 void playerHandler() {
     int i;
@@ -42,13 +42,13 @@ void placePawn(pid_t *pawns) {
     int posX = 0, posY = 0, positionOccupied = 1;
 
 #ifdef DEBUG
-    fprintf(stderr, "pid: %d , i'm a pawn\n", getpid());
-    sleep(10); /*thanks debugger*/
+    fprintf(stderr, "pid: %d , i'm a pawn. created by %d\n", getpid(), getppid());
+    //sleep(10); /*thanks debugger*/
 #endif
     /* casual positioning*/
     /*todo: scrivere nella relazione il fatto che avrei voluto usare un algoritmo di hashing
      * e disporre uniformemente le pedine sulla schacchiera, ma avrebbe senso solo programmando un giocatore singolo.
-     * dovendone programmare più essi otterrebbero tutti la stessa posizione e mi ritrovere con pedine affiancate*/
+     * dovendone programmare più essi otterrebbero tutti la stessa posizione e mi ritroverei con pedine affiancate*/
     srand(getpid());
     while (positionOccupied) {
         posX = rand() % sharedTable->base;
@@ -60,32 +60,51 @@ void placePawn(pid_t *pawns) {
 
 }
 
-void playerBirth(int pawnNumber) {
+void playerBirth(int pawnNumber, int numPlayer, int playersTot) {
     int i;
     pid_t *pawnArray;
     struct sigaction sa;
     int forkValue = -1;
+    char *string;
 
-#ifdef DEBUG
-    fprintf(stderr, "pid: %d , i'm a player\n", getpid());
-    sleep(10); /*thanks debugger*/
-    //printf("%d ", shmId);
-#endif
+    string = malloc(sizeof(char) * 200);
     /*sigaction setting*/
     bzero(&sa, sizeof(sa));
     sa.sa_handler = playerHandler;
     sigaction(SIGUSR1, &sa, NULL);
+#ifdef DEBUG
+    fprintf(stderr, "pid: %d , i'm a player\n", getpid());
+    printf("%d\n", playerSem);
+    //sleep(10); /*thanks debugger*/
+    //printf("%d ", shmId);
+#endif
     sharedTable = shmat(shmId, NULL,
                         0); //TODO: questo costrutto è veramente necessario? il puntatore a sharedTable è già nell'heap
     TEST_ERROR;
 
     pawnArray = malloc(sizeof(pid_t) * pawnNumber);
     for (i = 0; i < pawnNumber && forkValue != 0; ++i) {
+        /*sem_getall(string,playerSem);
+        fprintf(stderr,"%s\n",string);*/
+        semHandling(playerSem, numPlayer, RESERVE);
+        TEST_ERROR
         forkValue = fork();
-        if (forkValue == 0)
+        if (forkValue == 0) {
             placePawn(&pawnArray[i]);
+        }
+        if (forkValue == 0) {
+            pawnLife();
+        }
+        semHandling(playerSem, numPlayer == playersTot - 1 ? 0 : numPlayer + 1, RELEASE);
+        TEST_ERROR
     }
 
-    playerHandler();
+
+}
+
+void playerLife() {
+    while (1) {
+
+    }
 }
 

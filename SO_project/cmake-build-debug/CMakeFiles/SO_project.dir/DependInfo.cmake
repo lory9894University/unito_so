@@ -7,6 +7,7 @@ set(CMAKE_DEPENDS_CHECK_C
   "/home/lorenzo/workspaces/CLionProjects/SO_project/master.c" "/home/lorenzo/workspaces/CLionProjects/SO_project/cmake-build-debug/CMakeFiles/SO_project.dir/master.c.o"
   "/home/lorenzo/workspaces/CLionProjects/SO_project/pawn.c" "/home/lorenzo/workspaces/CLionProjects/SO_project/cmake-build-debug/CMakeFiles/SO_project.dir/pawn.c.o"
   "/home/lorenzo/workspaces/CLionProjects/SO_project/player.c" "/home/lorenzo/workspaces/CLionProjects/SO_project/cmake-build-debug/CMakeFiles/SO_project.dir/player.c.o"
+  "/home/lorenzo/workspaces/CLionProjects/SO_project/shared_res.c" "/home/lorenzo/workspaces/CLionProjects/SO_project/cmake-build-debug/CMakeFiles/SO_project.dir/shared_res.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

@@ -1,5 +1,4 @@
 #define _GNU_SOURCE
-
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -18,6 +17,7 @@
 //#define DEBUG
 
 int shmId;
+int playerSem;
 
 table *tableCreation(int base, int height) {
     table *myTable;
@@ -111,22 +111,31 @@ pid_t *playersCreation(int numPlayers, int numPawn) {
     int i = 0, forkVal = -1;
     pid_t *players;
 
+    playerSem = semget(IPC_PRIVATE, numPlayers, 0600);
+    TEST_ERROR
+    for (i = 0; i < numPlayers; ++i) {
+        semctl(playerSem, i, SETVAL, i == 0 ? 1 : 0);
+        TEST_ERROR
+    }
     players = malloc(sizeof(pid_t) * numPlayers);
     for (i = 0; i < numPlayers && forkVal != 0; ++i) {
         forkVal = fork();
         if (forkVal == 0) {
-            playerBirth(numPawn);
+            playerBirth(numPawn, i, numPlayers);
         } else /*father actions*/
             players[i] = forkVal;
+    }
+    if (forkVal == 0) {
+        playerLife();
     }
 
     return players;
 }
 
-void playerKill(int numPlayers, pid_t *players) {
+void endGame(int numPlayers, pid_t *players) {
     int i;
     for (i = 0; i < numPlayers; ++i) {
-        kill(players[i], SIGKILL);
+        kill(players[i], SIGUSR1);
     }
 }
 
@@ -141,15 +150,25 @@ int main(int argc, char **argv, char **envp) {
     sharedTable = tableCreation(environment.SO_BASE, environment.SO_ALTEZZA);
     flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX, environment.SO_ROUND_SCORE);
     //printState(*sharedTable);
-    playersCreation(environment.SO_NUM_G, environment.SO_NUM_P);
+    players = playersCreation(environment.SO_NUM_G, environment.SO_NUM_P);
 
     /*cleanig what is left*/
+    sleep(1);
+    endGame(environment.SO_NUM_G, players);
     while (wait(NULL) != -1);
     printState(*sharedTable);
+    for (i = 0; i < environment.SO_NUM_G; ++i) {
+        semctl(playerSem, 0, IPC_RMID);
+        shmctl(shmId, IPC_RMID,
+               NULL); //TODO: o trovo il modo di risalire all'id dall'indirizzo o li elimino appena li creo
+    }
     for (i = 0; i < environment.SO_ALTEZZA; ++i) {
         semctl(sharedTable->semMatrix[i], 0, IPC_RMID);
+        shmdt(sharedTable->matrix[i]);
     }
     shmctl(shmId, IPC_RMID, NULL);
+    shmdt(sharedTable->semMatrix);
+    shmdt(sharedTable->matrix);
     shmdt(sharedTable);
     return 0;
 }

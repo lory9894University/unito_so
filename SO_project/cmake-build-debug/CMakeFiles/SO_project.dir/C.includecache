@@ -16,14 +16,14 @@ string.h
 errno.h
 -
 
-/home/lorenzo/workspaces/CLionProjects/SO_project/pawn.c
-pawn.h
 /home/lorenzo/workspaces/CLionProjects/SO_project/pawn.h
-shared_res.h
-/home/lorenzo/workspaces/CLionProjects/SO_project/shared_res.h
-error_handling.h
-/home/lorenzo/workspaces/CLionProjects/SO_project/error_handling.h
+signal.h
+-
+
+/home/lorenzo/workspaces/CLionProjects/SO_project/player.c
 stdio.h
+-
+signal.h
 -
 stdlib.h
 -
@@ -31,20 +31,24 @@ unistd.h
 -
 sys/types.h
 -
-sys/ipc.h
--
 sys/wait.h
 -
-sys/shm.h
+strings.h
 -
 sys/sem.h
 -
-string.h
+sys/shm.h
 -
-
+shared_res.h
+/home/lorenzo/workspaces/CLionProjects/SO_project/shared_res.h
+player.h
+/home/lorenzo/workspaces/CLionProjects/SO_project/player.h
+error_handling.h
+/home/lorenzo/workspaces/CLionProjects/SO_project/error_handling.h
+pawn.h
 /home/lorenzo/workspaces/CLionProjects/SO_project/pawn.h
-signal.h
--
+
+/home/lorenzo/workspaces/CLionProjects/SO_project/player.h
 
 /home/lorenzo/workspaces/CLionProjects/SO_project/shared_res.h
 

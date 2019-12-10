@@ -19,3 +19,7 @@ CMakeFiles/SO_project.dir/player.c.o: ../player.c
 CMakeFiles/SO_project.dir/player.c.o: ../player.h
 CMakeFiles/SO_project.dir/player.c.o: ../shared_res.h
 
+CMakeFiles/SO_project.dir/shared_res.c.o: ../error_handling.h
+CMakeFiles/SO_project.dir/shared_res.c.o: ../shared_res.c
+CMakeFiles/SO_project.dir/shared_res.c.o: ../shared_res.h
+
