@@ -15,7 +15,7 @@
 #include "pawn.h"
 //#define DEBUG
 
-int shmId, playerSem, flagShm, flagNum;
+int shmId, playerSem, flagShm, flagNum, roundStartSem, pawnMoveSem;
 env environment;
 table *sharedTable;
 pid_t *players;
@@ -108,9 +108,8 @@ flag *flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScor
     }
 }
 
-pid_t *playersCreation(int numPlayers, int numPawn) {
+void playersCreation(int numPlayers, int numPawn) {
     int i = 0, forkVal = -1;
-    pid_t *players;
     int placePawnSem;
     pawn *playerPawnArray;
 
@@ -130,7 +129,7 @@ pid_t *playersCreation(int numPlayers, int numPawn) {
     for (i = 0; i < numPlayers && forkVal != 0; ++i) {
         forkVal = fork();
         if (forkVal == 0) {
-            playerPawnArray = playerBirth(numPawn, i, numPlayers, placePawnSem);
+            playerPawnArray = playerBirth(numPawn, i, numPlayers, placePawnSem, environment.SO_N_MOVES);
         } else /*father actions*/
             players[i] = forkVal;
     }
@@ -141,18 +140,19 @@ pid_t *playersCreation(int numPlayers, int numPawn) {
     /*wait for every player to place his pawns*/
     semHandling(placePawnSem, 0, 0);
     semctl(placePawnSem, 0, IPC_RMID);
-    return players;
 }
 
-void endGame(int numPlayers, pid_t *players) {
+void endGame(int numPlayers) {
     int i;
     for (i = 0; i < numPlayers; ++i) {
         kill(players[i], SIGUSR1);
     }
 }
 
-void clean(env environment, table *sharedTable, pid_t *players) {
+void clean() {
     int i;
+
+    semctl(roundStartSem, 0, IPC_RMID);
     for (i = 0; i < environment.SO_NUM_G; ++i) {
         semctl(playerSem, 0, IPC_RMID);
     }
@@ -169,10 +169,10 @@ void clean(env environment, table *sharedTable, pid_t *players) {
 
 void alarmHandler() {
 
-    endGame(environment.SO_NUM_G, players);
+    endGame(environment.SO_NUM_G);
     while (wait(NULL) != -1);
     printState(*sharedTable);
-    clean(environment, sharedTable, players);
+    clean();
 
     exit(0);
 }
@@ -192,16 +192,41 @@ int main(int argc, char **argv) {
     envReading(environ, &environment);
     sharedTable = tableCreation(environment.SO_BASE, environment.SO_ALTEZZA);
     flags = flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX, environment.SO_ROUND_SCORE);
-    players = playersCreation(environment.SO_NUM_G, environment.SO_NUM_P);
 
+    /*creating a semaphore for starting round before the creation of the players, otherwise they may run before the master and
+     * start the game before the master is ready*/
+    roundStartSem = semget(IPC_PRIVATE, 1, 0600);
+    TEST_ERROR
+    semctl(roundStartSem, 0, SETVAL, environment.SO_NUM_G);
+    TEST_ERROR
+
+    playersCreation(environment.SO_NUM_G, environment.SO_NUM_P);
+
+    /*creating a semaphore for starting round*/
+    roundStartSem = semget(IPC_PRIVATE, 1, 0600);
+    TEST_ERROR
+    /*creating a semaphore for moving pawn*/
+    pawnMoveSem = semget(IPC_PRIVATE, 1, 0600);
+    TEST_ERROR
 
     while (debug < 1) {
         debug++;
+        /*setting a semaphore to prevent the pawn from moving*/
+        semctl(pawnMoveSem, 0, SETVAL, 1);
+        TEST_ERROR
+        /*waiting for the players*/
+        semHandling(roundStartSem, 0, 0);
         alarm(environment.SO_MAX_TIME);
+        semHandling(pawnMoveSem, 0, -1); /*round started*/
+
         /* tu rimani in attesa di messaggi(aka le flag prese)
          * quando tutte le flag sono state prese, riavvia il ciclo, superati i SO_MAX_TIME secondi parte l'handler
          * */
         sleep(4);
+        alarm(0);
+        flags = flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX,
+                                 environment.SO_ROUND_SCORE);
+        semctl(roundStartSem, 0, SETVAL, environment.SO_NUM_G);
     }
 
     return 0;

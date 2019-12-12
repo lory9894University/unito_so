@@ -7,11 +7,18 @@
 typedef struct {
     int positionX, positionY;
     int objectiveX, objectiveY;
+    int objective2X, objective2Y;
+    int movesLeft;
     pid_t pid;
 
 } pawn;
 
-pid_t createPawn(int posX, int posY);
+typedef struct {
+    long mtype;             /* message type */
+    pawn newDirectives;
+} pawnDirection;
+
+void createPawn(int posX, int posY);
 
 void pawnLife();
 
