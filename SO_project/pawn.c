@@ -11,10 +11,12 @@
 #include <sys/shm.h>
 #include <sys/sem.h>
 #include <string.h>
+#include <sys/msg.h>
 
 #define DEBUG
 
 extern int shmId;/*processes already have in their stack the id of the shared mem*/
+extern int pawnMoveSem, msgPawn;
 table *sharedTable;
 
 void pawnHandler() {
@@ -31,8 +33,7 @@ void pawnHandler() {
     exit(0);
 }
 
-pid_t createPawn(int posX, int posY) {
-    pawn thisPawn;
+void createPawn(int posX, int posY) {
     struct sigaction sa;
 
     /*sigaction setting*/
@@ -49,16 +50,25 @@ pid_t createPawn(int posX, int posY) {
                         0);//TODO: questo costrutto è veramente necessario? il puntatore a sharedTable è già nell'heap
     TEST_ERROR;
 
-    thisPawn.positionX = posX;
-    thisPawn.positionY = posY;
-    thisPawn.pid = getpid();
-
     sharedTable->matrix[posY][posX] = 'T';
-
-    return thisPawn.pid;
 }
 
 void pawnLife() {
+    pawnDirection directives;
 
+
+    while (1) {
+        /*attendi le istruzioni dal player via pipe o msg*/
+        msgrcv(msgPawn, &directives, sizeof(pawn), getpid(), 0);
+        semHandling(pawnMoveSem, 0, 0); /*wait for master to start the round*/
+#ifdef DEBUG
+        fprintf(stderr, "%d directives. posx: %d posy %d, dirx: %d diry: %d\n", getpid(),
+                directives.newDirectives.positionX, directives.newDirectives.positionY,
+                directives.newDirectives.objectiveX, directives.newDirectives.objectiveY);
+#endif
+        /*muoviti verso la flag primaria, se ricevi il segnale di flag presa calcola la distanza dalla secondaria, se raggiungibile muoviti in direzione della secondaria*/
+        /*quando prendi una flag presa invia al master un messaggio specificando quale bandiera è stata presa sulla coda "flagQueque", calcola se puoi raggiungere la falg secondaria e comportati di conseguenza*/
+        /*quando hai finito le mosse, oppure se ricevi il segnale di fine turno invia la tua posizione e le mosse residue al player*/
+    }
     pawnHandler();
 }

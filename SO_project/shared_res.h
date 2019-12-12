@@ -4,7 +4,6 @@
 #define RELEASE 1
 #define _GNU_SOURCE
 
-
 typedef struct {
     int base, height;
     char **matrix;

@@ -5,8 +5,8 @@
 
 #define _GNU_SOURCE
 
-pawn *playerBirth(int pawnNumber, int numPlayer, int playersTot, int pawnSem);
+pawn *playerBirth(int pawnNum, int numPlayer, int playersTot, int pawnSem, int moves);
 
-void playerLife(pawn *pawnArray, int pawnNumber);
+void playerLife();
 
 #endif //SO_PROJECT_PLAYER_H
