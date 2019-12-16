@@ -155,7 +155,6 @@ void objectives(flag *flags) {
             }
         }
     }
-    /*todo: occhio che glieli devi ancora passare alla pedina, magari tramite un pipe, o un msg*/
     for (i = 0; i < pawnNumber; ++i) {
         directives.mtype = pawnArray[i].pid;
         directives.newDirectives = pawnArray[i];
@@ -173,11 +172,7 @@ void playerLife() {
 
     flags = shmat(flagShm, NULL, 0);
     while (1) {
-        /*todo: nella relazione scrivere chè è inutile fornire un "backup plan" nel caso una pedina raggiunga una flag, in modo che ne cerchi un'altra
-         * le pedine sono moltissime e le flag poche (rapporto medio 5:1 per ogni giocatore), tale implementazione richiederebbe tantissimo tempo di cpu (un signal ed un pipe)
-         * andando a rallentare la velocità di esecuzione dei processi pedina, aumentando inutilmente il il numero di mosse utilizzate (metro di valutazione)
-         * una pedina NON può prendere 2 bandiere, è statisticamente assurdo
-         * aggiunta: la pedina sta in ascolto del master, se la sua pedina obbiettivo è presa calcola la distanza dalla 2 flag più vicina
+        /*aggiunta: la pedina sta in ascolto del master, se la sua pedina obbiettivo è presa calcola la distanza dalla 2 flag più vicina
          * sottrai il n° di mosse rimaste dalla distaza e vede se ci può arrivare*/
         /*todo: lettura posizione pedine*/
         objectives(flags);

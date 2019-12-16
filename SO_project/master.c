@@ -33,7 +33,7 @@ table *tableCreation(int base, int height) {
     //game table definition
     myTable->base = base;
     myTable->height = height;
-    shmTemp = shmget(IPC_PRIVATE, sizeof(int) * height, 0600);
+    shmTemp = shmget(IPC_PRIVATE, sizeof(int) * height, 0600); //todo: questi sono char non int
     myTable->matrix = shmat(shmTemp, NULL, 0);
     shmctl(shmTemp, IPC_RMID, NULL);
     shmTemp = shmget(IPC_PRIVATE, sizeof(int) * height, 0600);
@@ -205,6 +205,7 @@ int main(int argc, char **argv) {
     /*creating a semaphore for starting round*/
     roundStartSem = semget(IPC_PRIVATE, 1, 0600);
     TEST_ERROR
+    //todo:cosa cazzo ho scritto qui, perche creo 2 volte il semaforo?
     /*creating a semaphore for moving pawn*/
     pawnMoveSem = semget(IPC_PRIVATE, 1, 0600);
     TEST_ERROR
