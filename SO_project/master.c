@@ -9,13 +9,14 @@
 #include <sys/shm.h>
 #include <sys/sem.h>
 #include <string.h>
+#include <sys/msg.h>
 #include "env_operation.h"
 #include "player.h"
 #include "shared_res.h"
 #include "pawn.h"
 //#define DEBUG
 
-int shmId, playerSem, flagShm, flagNum, roundStartSem, pawnMoveSem;
+int shmId, playerSem, flagShm, flagNum, roundStartSem, pawnMoveSem, flagQueue, masterBroadcast;
 env environment;
 table *sharedTable;
 pid_t *players;
@@ -74,7 +75,7 @@ void printState(
     }
 }
 
-flag *flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScore) {
+void flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScore) {
     int flagNotValued;
     int X, Y, positionOccupied;
     int i;
@@ -91,6 +92,7 @@ flag *flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScor
         flags[i].value = (rand() % (roundScore - flagNotValued--) + 1);
         roundScore -= flags[i].value;
         flags[i].taken = 0;
+        flags[i].id = i;
 
         /*flag position randomly assigned, if the position is already occupied it calculate a nev position*/
         positionOccupied = 1;
@@ -153,6 +155,7 @@ void clean() {
     int i;
 
     semctl(roundStartSem, 0, IPC_RMID);
+    semctl(pawnMoveSem, 0, IPC_RMID);
     for (i = 0; i < environment.SO_NUM_G; ++i) {
         semctl(playerSem, 0, IPC_RMID);
     }
@@ -160,6 +163,8 @@ void clean() {
         semctl(sharedTable->semMatrix[i], 0, IPC_RMID);
         shmdt(sharedTable->matrix[i]);
     }
+    msgctl(flagQueue, IPC_RMID, NULL);
+    msgctl(masterBroadcast, IPC_RMID, NULL);
     shmctl(shmId, IPC_RMID, NULL);
     shmdt(sharedTable->semMatrix);
     shmdt(sharedTable->matrix);
@@ -180,7 +185,9 @@ void alarmHandler() {
 int main(int argc, char **argv) {
     struct sigaction sa;
     int debug = 0;
-    flag *flags;
+    int i;
+    msgFlag message;
+
 
     /*sigaction setting*/
     bzero(&sa, sizeof(sa));
@@ -191,7 +198,7 @@ int main(int argc, char **argv) {
     setvbuf(stdout, NULL, _IONBF, 0);
     envReading(environ, &environment);
     sharedTable = tableCreation(environment.SO_BASE, environment.SO_ALTEZZA);
-    flags = flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX, environment.SO_ROUND_SCORE);
+    flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX, environment.SO_ROUND_SCORE);
 
     /*creating a semaphore for starting round before the creation of the players, otherwise they may run before the master and
      * start the game before the master is ready*/
@@ -202,10 +209,8 @@ int main(int argc, char **argv) {
 
     playersCreation(environment.SO_NUM_G, environment.SO_NUM_P);
 
-    /*creating a semaphore for starting round*/
-    roundStartSem = semget(IPC_PRIVATE, 1, 0600);
-    TEST_ERROR
-    //todo:cosa cazzo ho scritto qui, perche creo 2 volte il semaforo?
+    flagQueue = msgget(IPC_PRIVATE, IPC_CREAT | 0600);
+    masterBroadcast = msgget(IPC_PRIVATE, IPC_CREAT | 0600);
     /*creating a semaphore for moving pawn*/
     pawnMoveSem = semget(IPC_PRIVATE, 1, 0600);
     TEST_ERROR
@@ -219,14 +224,20 @@ int main(int argc, char **argv) {
         semHandling(roundStartSem, 0, 0);
         alarm(environment.SO_MAX_TIME);
         semHandling(pawnMoveSem, 0, -1); /*round started*/
+        for (i = 0; i < flagNum; ++i) {
+            msgrcv(flagQueue, &message, sizeof(int) * 2, 0, 0);
+            /*fai i tuoi inutili calcoli sui punteggi ed invia un segnale a tutti i giocatori che a cascata avvertiranno le pedine
+             * del fatto che quella flag è presa, le pedine che hano come obbiettivo quella flag switchano al target 2,
+             * le pedine che hano quella flag come obbietivo 2 si fermano*/
 
+        }
         /* tu rimani in attesa di messaggi(aka le flag prese)
          * quando tutte le flag sono state prese, riavvia il ciclo, superati i SO_MAX_TIME secondi parte l'handler
          * */
         sleep(4);
         alarm(0);
-        flags = flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX,
-                                 environment.SO_ROUND_SCORE);
+        flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX,
+                         environment.SO_ROUND_SCORE);
         semctl(roundStartSem, 0, SETVAL, environment.SO_NUM_G);
     }
 

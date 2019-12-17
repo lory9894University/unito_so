@@ -29,9 +29,11 @@ void playerHandler() {
     int childPid = 0;
     int status = 0;
     printf("%d player: game finished, waiting child and exiting\n", getpid());
+#endif
     for (i = 0; i < pawnNumber; ++i) {
         kill(pawnArray[i].pid, SIGUSR1);
     }
+#ifdef DEBUG
     while ((childPid = wait(&status)) != -1)
         dprintf(2, "PID=%d. Sender (PID=%d) terminated with status %d\n", getpid(), childPid, WEXITSTATUS(status));
 #else
@@ -43,6 +45,7 @@ void playerHandler() {
     shmdt(sharedTable->semMatrix);
     shmdt(sharedTable->matrix);
     shmdt(sharedTable);
+    msgctl(msgPawn, IPC_RMID, NULL);
     exit(0);
 }
 
@@ -60,7 +63,7 @@ pawn *playerBirth(int pawnNum, int numPlayer, int playersTot, int pawnSem, int m
 
 #ifdef DEBUG
     fprintf(stderr, "pid: %d , i'm a player\n", getpid());
-    sleep(10); /*thanks debugger*/
+    //sleep(10); /*thanks debugger*/
     //printf("%d ", shmId);
 #endif
     sharedTable = shmat(shmId, NULL, 0);
@@ -136,8 +139,10 @@ void objectives(flag *flags) {
         }
         pawnArray[i].objectiveX = flags[bestFlag].xPos;
         pawnArray[i].objectiveY = flags[bestFlag].yPos;
+        pawnArray[i].objectiveId = flags[bestFlag].id;
         pawnArray[i].objective2X = flags[secondBestFlag].xPos;
         pawnArray[i].objective2Y = flags[secondBestFlag].yPos;
+        pawnArray[i].objective2Id = flags[secondBestFlag].id;
     }
     distanceBest = 0;
     distanceLocal = 0;
@@ -174,11 +179,14 @@ void playerLife() {
     while (1) {
         /*aggiunta: la pedina sta in ascolto del master, se la sua pedina obbiettivo è presa calcola la distanza dalla 2 flag più vicina
          * sottrai il n° di mosse rimaste dalla distaza e vede se ci può arrivare*/
-        /*todo: lettura posizione pedine*/
         objectives(flags);
         semHandling(roundStartSem, 0, -1);
+#ifdef DEBUG
         printf("master can start\n");
         wait(NULL);
+#endif
+
+        /*todo: lettura posizione pedine*/
 
     }
 }

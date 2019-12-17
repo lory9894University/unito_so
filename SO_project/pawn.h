@@ -6,8 +6,8 @@
 
 typedef struct {
     int positionX, positionY;
-    int objectiveX, objectiveY;
-    int objective2X, objective2Y;
+    int objectiveX, objectiveY, objectiveId;
+    int objective2X, objective2Y, objective2Id;
     int movesLeft;
     pid_t pid;
 
