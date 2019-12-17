@@ -15,14 +15,15 @@
 
 #define DEBUG
 
-extern int shmId;/*processes already have in their stack the id of the shared mem*/
+extern int shmId, flagShm;/*processes already have in their stack the id of the shared mem*/
 extern int pawnMoveSem, msgPawn;
 table *sharedTable;
+flag *flags;
 
 void pawnHandler() {
     int i;
 #ifdef DEBUG
-    printf("%d pawn: game finished, exiting\n",getpid());
+    printf("%d pawn: game finished, exiting\n", getpid());
 #endif
     for (i = 0; i < sharedTable->height; ++i) {
         shmdt(sharedTable->matrix[i]);
@@ -46,10 +47,9 @@ void createPawn(int posX, int posY) {
     //sleep(10); /*thanks debugger*/
 #endif
 
-    sharedTable = shmat(shmId, NULL,
-                        0);//TODO: questo costrutto è veramente necessario? il puntatore a sharedTable è già nell'heap
+    sharedTable = shmat(shmId, NULL, 0);
     TEST_ERROR;
-
+    flags = shmat(flagShm, NULL, 0);
     sharedTable->matrix[posY][posX] = 'T';
 }
 
@@ -69,6 +69,7 @@ void pawnLife() {
         /*muoviti verso la flag primaria, se ricevi il segnale di flag presa calcola la distanza dalla secondaria, se raggiungibile muoviti in direzione della secondaria*/
         /*quando prendi una flag presa invia al master un messaggio specificando quale bandiera è stata presa sulla coda "flagQueque", calcola se puoi raggiungere la falg secondaria e comportati di conseguenza*/
         /*quando hai finito le mosse, oppure se ricevi il segnale di fine turno invia la tua posizione e le mosse residue al player*/
+        /*attendi sulla coda masterBroadcast con IPC_NOWAIT, nel mentre esegui i tuoi spostamenti*/
     }
     pawnHandler();
 }
