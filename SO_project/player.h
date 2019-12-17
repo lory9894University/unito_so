@@ -7,6 +7,6 @@
 
 pawn *playerBirth(int pawnNum, int numPlayer, int playersTot, int pawnSem, int moves);
 
-void playerLife();
+void playerLife(int moves);
 
 #endif //SO_PROJECT_PLAYER_H

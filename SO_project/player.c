@@ -49,9 +49,16 @@ void playerHandler() {
     exit(0);
 }
 
+void endRound() {
+    int i;
+    for (i = 0; i < pawnNumber; ++i) {
+        kill(pawnArray[i].pid, SIGUSR2);
+    }
+}
+
 pawn *playerBirth(int pawnNum, int numPlayer, int playersTot, int pawnSem, int moves) {
     int i;
-    struct sigaction sa;
+    struct sigaction sa, sf;
     int forkValue = -1;
     int posX = 0, posY = 0, positionOccupied = 1;
     pawnNumber = pawnNum;
@@ -60,6 +67,10 @@ pawn *playerBirth(int pawnNum, int numPlayer, int playersTot, int pawnSem, int m
     bzero(&sa, sizeof(sa));
     sa.sa_handler = playerHandler;
     sigaction(SIGUSR1, &sa, NULL);
+
+    bzero(&sf, sizeof(sf));
+    sf.sa_handler = endRound;
+    sigaction(SIGUSR2, &sf, NULL);
 
 #ifdef DEBUG
     fprintf(stderr, "pid: %d , i'm a player\n", getpid());
@@ -170,23 +181,31 @@ void objectives(flag *flags) {
      * il player legge tutti i messaggi, perchè contengono i dati relativi alla posizione delle pedine a fine turno*/
 }
 
-void playerLife() {
+void playerLife(int moves) {
     flag *flags;
     extern int flagShm;
-    int i = 0;
+    int i = 0, j;
+    pawnDirection direction;
+
 
     flags = shmat(flagShm, NULL, 0);
     while (1) {
-        /*aggiunta: la pedina sta in ascolto del master, se la sua pedina obbiettivo è presa calcola la distanza dalla 2 flag più vicina
-         * sottrai il n° di mosse rimaste dalla distaza e vede se ci può arrivare*/
         objectives(flags);
         semHandling(roundStartSem, 0, -1);
 #ifdef DEBUG
         printf("master can start\n");
         wait(NULL);
 #endif
-
-        /*todo: lettura posizione pedine*/
+        for (i = 0; i < pawnNumber; ++i) {
+            msgrcv(msgPawn, &direction, sizeof(pawn), 0, 0);
+            for (j = 0; j < pawnNumber; ++j) {
+                if (direction.mtype == pawnArray[j].pid) {
+                    pawnArray[i].positionX = direction.newDirectives.positionX;
+                    pawnArray[i].positionY = direction.newDirectives.positionY;
+                    pawnArray[i].movesLeft = moves;
+                }
+            }
+        }
 
     }
 }
