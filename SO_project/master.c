@@ -16,7 +16,7 @@
 #include "pawn.h"
 //#define DEBUG
 
-int shmId, playerSem, flagShm, flagNum, roundStartSem, pawnMoveSem, flagQueue, masterBroadcast;
+int shmId, playerSem, flagShm, flagNum, roundStartSem, pawnMoveSem, flagQueue;
 env environment;
 table *sharedTable;
 pid_t *players;
@@ -136,7 +136,7 @@ void playersCreation(int numPlayers, int numPawn) {
             players[i] = forkVal;
     }
     if (forkVal == 0) {
-        playerLife(playerPawnArray, numPawn);
+        playerLife(environment.SO_N_MOVES);
     }
 
     /*wait for every player to place his pawns*/
@@ -146,6 +146,7 @@ void playersCreation(int numPlayers, int numPawn) {
 
 void endGame(int numPlayers) {
     int i;
+    sleep(1);
     for (i = 0; i < numPlayers; ++i) {
         kill(players[i], SIGUSR1);
     }
@@ -164,7 +165,6 @@ void clean() {
         shmdt(sharedTable->matrix[i]);
     }
     msgctl(flagQueue, IPC_RMID, NULL);
-    msgctl(masterBroadcast, IPC_RMID, NULL);
     shmctl(shmId, IPC_RMID, NULL);
     shmdt(sharedTable->semMatrix);
     shmdt(sharedTable->matrix);
@@ -185,7 +185,7 @@ void alarmHandler() {
 int main(int argc, char **argv) {
     struct sigaction sa;
     int debug = 0;
-    int i;
+    int i, j;
     msgFlag message;
 
 
@@ -210,7 +210,6 @@ int main(int argc, char **argv) {
     playersCreation(environment.SO_NUM_G, environment.SO_NUM_P);
 
     flagQueue = msgget(IPC_PRIVATE, IPC_CREAT | 0600);
-    masterBroadcast = msgget(IPC_PRIVATE, IPC_CREAT | 0600);
     /*creating a semaphore for moving pawn*/
     pawnMoveSem = semget(IPC_PRIVATE, 1, 0600);
     TEST_ERROR
@@ -225,10 +224,8 @@ int main(int argc, char **argv) {
         alarm(environment.SO_MAX_TIME);
         semHandling(pawnMoveSem, 0, -1); /*round started*/
         for (i = 0; i < flagNum; ++i) {
-            msgrcv(flagQueue, &message, sizeof(int) * 2, 0, 0);
-            /*fai i tuoi inutili calcoli sui punteggi ed invia un segnale a tutti i giocatori che a cascata avvertiranno le pedine
-             * del fatto che quella flag è presa, le pedine che hano come obbiettivo quella flag switchano al target 2,
-             * le pedine che hano quella flag come obbietivo 2 si fermano*/
+            msgrcv(flagQueue, &message, sizeof(int) * 2, 0, MSG_COPY);
+            /*fai i tuoi inutili calcoli sui punteggi */
 
         }
         /* tu rimani in attesa di messaggi(aka le flag prese)
