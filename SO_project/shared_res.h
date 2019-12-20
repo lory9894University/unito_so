@@ -23,7 +23,7 @@ typedef struct {
     int playerPid;
 } msgFlag;
 
-/*semOp, -1 release, 1 reserve*/
+/*semOp, 1 release, -1 reserve*/
 int semHandling(int semId, int semNum, int semOp);
 
 #endif //SO_PROJECT_SHARED_RES_H

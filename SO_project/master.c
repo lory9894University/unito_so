@@ -16,7 +16,7 @@
 #include "pawn.h"
 //#define DEBUG
 
-int shmId, playerSem, flagShm, flagNum, roundStartSem, pawnMoveSem, flagQueue;
+int shmId, playerSem, flagShm, flagNum, roundStartSem, pawnMoveSem, flagQueue, indicationSem;
 env environment;
 table *sharedTable;
 pid_t *players;
@@ -34,10 +34,10 @@ table *tableCreation(int base, int height) {
     //game table definition
     myTable->base = base;
     myTable->height = height;
-    shmTemp = shmget(IPC_PRIVATE, sizeof(int) * height, 0600); //todo: questi sono char non int
+    shmTemp = shmget(IPC_PRIVATE, sizeof(char) * height, 0600); //todo: questi sono char non int
     myTable->matrix = shmat(shmTemp, NULL, 0);
     shmctl(shmTemp, IPC_RMID, NULL);
-    shmTemp = shmget(IPC_PRIVATE, sizeof(int) * height, 0600);
+    shmTemp = shmget(IPC_PRIVATE, sizeof(char) * height, 0600);
     myTable->semMatrix = shmat(shmTemp, NULL, 0);
     shmctl(shmTemp, IPC_RMID, NULL);
     for (i = 0; i < height; ++i) {
@@ -113,9 +113,7 @@ void flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScore
 void playersCreation(int numPlayers, int numPawn) {
     int i = 0, forkVal = -1;
     int placePawnSem;
-    pawn *playerPawnArray;
 
-    playerPawnArray = malloc(sizeof(pawn) * numPawn);
     placePawnSem = semget(IPC_PRIVATE, 1, 0600);
     TEST_ERROR
     semctl(placePawnSem, 0, SETVAL, numPlayers);
@@ -131,7 +129,7 @@ void playersCreation(int numPlayers, int numPawn) {
     for (i = 0; i < numPlayers && forkVal != 0; ++i) {
         forkVal = fork();
         if (forkVal == 0) {
-            playerPawnArray = playerBirth(numPawn, i, numPlayers, placePawnSem, environment.SO_N_MOVES);
+            playerBirth(numPawn, i, numPlayers, placePawnSem, environment.SO_N_MOVES);
         } else /*father actions*/
             players[i] = forkVal;
     }
@@ -146,7 +144,6 @@ void playersCreation(int numPlayers, int numPawn) {
 
 void endGame(int numPlayers) {
     int i;
-    sleep(1);
     for (i = 0; i < numPlayers; ++i) {
         kill(players[i], SIGUSR1);
     }
@@ -157,6 +154,8 @@ void clean() {
 
     semctl(roundStartSem, 0, IPC_RMID);
     semctl(pawnMoveSem, 0, IPC_RMID);
+    semctl(indicationSem, 0, IPC_RMID);
+
     for (i = 0; i < environment.SO_NUM_G; ++i) {
         semctl(playerSem, 0, IPC_RMID);
     }
@@ -185,7 +184,7 @@ void alarmHandler() {
 int main(int argc, char **argv) {
     struct sigaction sa;
     int debug = 0;
-    int i, j;
+    int i;
     msgFlag message;
 
 
@@ -203,10 +202,9 @@ int main(int argc, char **argv) {
     /*creating a semaphore for starting round before the creation of the players, otherwise they may run before the master and
      * start the game before the master is ready*/
     roundStartSem = semget(IPC_PRIVATE, 1, 0600);
-    TEST_ERROR
     semctl(roundStartSem, 0, SETVAL, environment.SO_NUM_G);
-    TEST_ERROR
-
+    indicationSem = semget(IPC_PRIVATE, 1, 0600);
+    semctl(indicationSem, 0, SETVAL, 0);
     playersCreation(environment.SO_NUM_G, environment.SO_NUM_P);
 
     flagQueue = msgget(IPC_PRIVATE, IPC_CREAT | 0600);
@@ -214,24 +212,35 @@ int main(int argc, char **argv) {
     pawnMoveSem = semget(IPC_PRIVATE, 1, 0600);
     TEST_ERROR
 
+
     while (debug < 1) {
-        debug++;
-        /*setting a semaphore to prevent the pawn from moving*/
+        /*setting a semaphore to prevent the pawn from moving
+         * no need to set it before creation because of the wait on msg queue*/
         semctl(pawnMoveSem, 0, SETVAL, 1);
+        /*semaphore to start the indication phase*/
+        //sleep(10);
+        semctl(indicationSem, 0, SETVAL, environment.SO_NUM_G);
+        debug++;
         TEST_ERROR
         /*waiting for the players*/
         semHandling(roundStartSem, 0, 0);
-        alarm(environment.SO_MAX_TIME);
+        alarm(10);
         semHandling(pawnMoveSem, 0, -1); /*round started*/
         for (i = 0; i < flagNum; ++i) {
-            msgrcv(flagQueue, &message, sizeof(int) * 2, 0, MSG_COPY);
+            sleep(1);
+            msgrcv(flagQueue, &message, sizeof(int) * 2, 0, 0);
+            /*il master deve ritrasmettere a tutti sun una coda separata i messaggi ricevuti da questa
+             * messaggi da leggere con il flag MSG_COPY*/
             /*fai i tuoi inutili calcoli sui punteggi */
 
+        }
+        for (i = 0; i < environment.SO_NUM_G; ++i) {
+            kill(players[i], SIGUSR2);
         }
         /* tu rimani in attesa di messaggi(aka le flag prese)
          * quando tutte le flag sono state prese, riavvia il ciclo, superati i SO_MAX_TIME secondi parte l'handler
          * */
-        sleep(4);
+        sleep(7);
         alarm(0);
         flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX,
                          environment.SO_ROUND_SCORE);
