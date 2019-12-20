@@ -19,7 +19,7 @@
 
 extern int shmId;/*processes already have in their stack the id of the shared mem*/
 extern table *sharedTable;
-extern int playerSem, roundStartSem;
+extern int playerSem, roundStartSem, indicationSem;
 int msgPawn, pawnNumber;
 pawn *pawnArray;
 
@@ -70,6 +70,7 @@ pawn *playerBirth(int pawnNum, int numPlayer, int playersTot, int pawnSem, int m
 
     bzero(&sf, sizeof(sf));
     sf.sa_handler = endRound;
+    sf.sa_flags = SA_RESTART;
     sigaction(SIGUSR2, &sf, NULL);
 
 #ifdef DEBUG
@@ -176,9 +177,6 @@ void objectives(flag *flags) {
         directives.newDirectives = pawnArray[i];
         msgsnd(msgPawn, &directives, sizeof(pawn), 0);
     }
-    /*crea una msgqueue per ogni player, il player sulla coda invia le direttive impostando come tipo del messaggio il pid del figlio
-     * le varie pedine figlio ricevono solo il loro messaggi (mtype > 0)
-     * il player legge tutti i messaggi, perchè contengono i dati relativi alla posizione delle pedine a fine turno*/
 }
 
 void playerLife(int moves) {
@@ -187,22 +185,23 @@ void playerLife(int moves) {
     int i = 0, j;
     pawnDirection direction;
 
-
     flags = shmat(flagShm, NULL, 0);
     while (1) {
+        semHandling(indicationSem, 0, RESERVE);
+        fprintf(stderr, "started indication\n");
         objectives(flags);
         semHandling(roundStartSem, 0, -1);
 #ifdef DEBUG
         printf("master can start\n");
-        wait(NULL);
 #endif
         for (i = 0; i < pawnNumber; ++i) {
-            msgrcv(msgPawn, &direction, sizeof(pawn), 0, 0);
+            msgrcv(msgPawn, &direction, sizeof(pawn), 1, 0);
             for (j = 0; j < pawnNumber; ++j) {
                 if (direction.mtype == pawnArray[j].pid) {
                     pawnArray[i].positionX = direction.newDirectives.positionX;
                     pawnArray[i].positionY = direction.newDirectives.positionY;
                     pawnArray[i].movesLeft = moves;
+                    printf("%d\n", direction.newDirectives.movesLeft);
                 }
             }
         }
