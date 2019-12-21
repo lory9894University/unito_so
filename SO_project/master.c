@@ -224,24 +224,25 @@ int main(int argc, char **argv) {
         TEST_ERROR
         /*waiting for the players*/
         semHandling(roundStartSem, 0, 0);
-        alarm(10);
+        alarm(3);
         semHandling(pawnMoveSem, 0, -1); /*round started*/
         for (i = 0; i < flagNum; ++i) {
-            sleep(1);
-            msgrcv(flagQueue, &message, sizeof(int) * 2, 0, 0);
+            //sleep(1);
+            //msgrcv(flagQueue, &message, sizeof(int) * 2, 0, 0);
             /*il master deve ritrasmettere a tutti sun una coda separata i messaggi ricevuti da questa
              * messaggi da leggere con il flag MSG_COPY*/
             /*fai i tuoi inutili calcoli sui punteggi */
 
         }
+        sleep(4);
+        alarm(0);
+        semctl(pawnMoveSem, 0, SETVAL, 1);
         for (i = 0; i < environment.SO_NUM_G; ++i) {
             kill(players[i], SIGUSR2);
         }
         /* tu rimani in attesa di messaggi(aka le flag prese)
          * quando tutte le flag sono state prese, riavvia il ciclo, superati i SO_MAX_TIME secondi parte l'handler
          * */
-        sleep(7);
-        alarm(0);
         flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX,
                          environment.SO_ROUND_SCORE);
         semctl(roundStartSem, 0, SETVAL, environment.SO_NUM_G);

@@ -159,7 +159,8 @@
       <workItem from="1576581831023" duration="1738000" />
       <workItem from="1576590457641" duration="4328000" />
       <workItem from="1576684572779" duration="598000" />
-      <workItem from="1576833184662" duration="11561000" />
+      <workItem from="1576833184662" duration="11684000" />
+      <workItem from="1576924230317" duration="4831000" />
     </task>
     <task id="LOCAL-00001">
       <created>1575125078810</created>
@@ -224,7 +225,14 @@
       <option name="project" value="LOCAL" />
       <updated>1576147895080</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="fucking fucked SIGUSER2 removes process from waiting on queue ignoring the SA_RESTART. changed again the policy about flagQueue, now the master reads and retrasmit on another queue">
+      <created>1576859528971</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1576859528971</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -240,7 +248,8 @@
     <MESSAGE value="tryng to implement strategy" />
     <MESSAGE value="player and pawns can now comunicate, making progress here,&#10;i feel like i'm loosing my sanity" />
     <MESSAGE value="bunch of stuff, now there is only one msg queue for the flags and it is readonly (not implemented yet), created signal to end the round, with signal handler. revisioned strategy" />
-    <option name="LAST_COMMIT_MESSAGE" value="bunch of stuff, now there is only one msg queue for the flags and it is readonly (not implemented yet), created signal to end the round, with signal handler. revisioned strategy" />
+    <MESSAGE value="fucking fucked SIGUSER2 removes process from waiting on queue ignoring the SA_RESTART. changed again the policy about flagQueue, now the master reads and retrasmit on another queue" />
+    <option name="LAST_COMMIT_MESSAGE" value="fucking fucked SIGUSER2 removes process from waiting on queue ignoring the SA_RESTART. changed again the policy about flagQueue, now the master reads and retrasmit on another queue" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -269,19 +278,19 @@
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2726" y="309" width="365" height="495" key="#xdebugger.XInspectDialog/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576147118356" />
-    <state x="2776" y="257" width="474" height="614" key="#xdebugger.evaluate" timestamp="1576855956992">
+    <state x="2776" y="257" width="474" height="614" key="#xdebugger.evaluate" timestamp="1576925509513">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state x="2776" y="257" width="474" height="614" key="#xdebugger.evaluate/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576855956992" />
+    <state x="2776" y="257" width="474" height="614" key="#xdebugger.evaluate/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576925509513" />
     <state x="2649" y="409" width="518" height="295" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1576067673574">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2649" y="409" width="518" height="295" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576067673574" />
-    <state x="2949" y="126" width="1672" height="814" key="CommitChangelistDialog2" timestamp="1576859526874">
+    <state x="2949" y="126" width="1672" height="814" key="CommitChangelistDialog2" timestamp="1576929649199">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2402" y="150" width="1012" height="814" key="CommitChangelistDialog2/0.27.3840.1053@0.27.3840.1053" timestamp="1575125074572" />
-    <state x="2949" y="126" width="881" height="814" key="CommitChangelistDialog2/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576859526874" />
+    <state x="2949" y="126" width="881" height="814" key="CommitChangelistDialog2/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576929649199" />
     <state x="238" y="150" width="1672" height="814" key="CommitChangelistDialog2/70.27.1850.1053@70.27.1850.1053" timestamp="1576594991506" />
     <state width="491" height="466" key="DebuggerActiveHint" timestamp="1576147013694">
       <screen x="1920" y="0" width="1920" height="1080" />
@@ -317,58 +326,58 @@
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.-1.right/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576146959908" />
-    <state width="1807" height="801" key="GridCell.Tab.0.bottom" timestamp="1576859241727">
+    <state width="1807" height="220" key="GridCell.Tab.0.bottom" timestamp="1576929257886">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.0.bottom/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
     <state width="1874" height="701" key="GridCell.Tab.0.bottom/1920.0.1920.1080/0.27.1920.1053@0.27.1920.1053" timestamp="1576857093994" />
-    <state width="1807" height="801" key="GridCell.Tab.0.bottom/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576859241727" />
+    <state width="1807" height="220" key="GridCell.Tab.0.bottom/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576929257886" />
     <state width="1804" height="275" key="GridCell.Tab.0.bottom/70.27.1850.1053@70.27.1850.1053" timestamp="1576583568852" />
-    <state width="1807" height="801" key="GridCell.Tab.0.center" timestamp="1576859241727">
+    <state width="1807" height="220" key="GridCell.Tab.0.center" timestamp="1576929257886">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.0.center/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
     <state width="1874" height="701" key="GridCell.Tab.0.center/1920.0.1920.1080/0.27.1920.1053@0.27.1920.1053" timestamp="1576857093994" />
-    <state width="1807" height="801" key="GridCell.Tab.0.center/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576859241727" />
+    <state width="1807" height="220" key="GridCell.Tab.0.center/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576929257886" />
     <state width="1804" height="275" key="GridCell.Tab.0.center/70.27.1850.1053@70.27.1850.1053" timestamp="1576583568851" />
-    <state width="1807" height="801" key="GridCell.Tab.0.left" timestamp="1576859241727">
+    <state width="1807" height="220" key="GridCell.Tab.0.left" timestamp="1576929257886">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.0.left/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121336" />
     <state width="1874" height="701" key="GridCell.Tab.0.left/1920.0.1920.1080/0.27.1920.1053@0.27.1920.1053" timestamp="1576857093994" />
-    <state width="1807" height="801" key="GridCell.Tab.0.left/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576859241727" />
+    <state width="1807" height="220" key="GridCell.Tab.0.left/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576929257886" />
     <state width="1804" height="275" key="GridCell.Tab.0.left/70.27.1850.1053@70.27.1850.1053" timestamp="1576583568851" />
-    <state width="1807" height="801" key="GridCell.Tab.0.right" timestamp="1576859241727">
+    <state width="1807" height="220" key="GridCell.Tab.0.right" timestamp="1576929257886">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.0.right/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
     <state width="1874" height="701" key="GridCell.Tab.0.right/1920.0.1920.1080/0.27.1920.1053@0.27.1920.1053" timestamp="1576857093994" />
-    <state width="1807" height="801" key="GridCell.Tab.0.right/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576859241727" />
+    <state width="1807" height="220" key="GridCell.Tab.0.right/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576929257886" />
     <state width="1804" height="275" key="GridCell.Tab.0.right/70.27.1850.1053@70.27.1850.1053" timestamp="1576583568851" />
-    <state width="1807" height="181" key="GridCell.Tab.1.bottom" timestamp="1576858185457">
+    <state width="1807" height="282" key="GridCell.Tab.1.bottom" timestamp="1576929255464">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.1.bottom/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
     <state width="1874" height="641" key="GridCell.Tab.1.bottom/1920.0.1920.1080/0.27.1920.1053@0.27.1920.1053" timestamp="1576856903677" />
-    <state width="1807" height="181" key="GridCell.Tab.1.bottom/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576858185457" />
-    <state width="1807" height="181" key="GridCell.Tab.1.center" timestamp="1576858185457">
+    <state width="1807" height="282" key="GridCell.Tab.1.bottom/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576929255464" />
+    <state width="1807" height="282" key="GridCell.Tab.1.center" timestamp="1576929255464">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.1.center/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
     <state width="1874" height="641" key="GridCell.Tab.1.center/1920.0.1920.1080/0.27.1920.1053@0.27.1920.1053" timestamp="1576856903677" />
-    <state width="1807" height="181" key="GridCell.Tab.1.center/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576858185457" />
-    <state width="1807" height="181" key="GridCell.Tab.1.left" timestamp="1576858185457">
+    <state width="1807" height="282" key="GridCell.Tab.1.center/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576929255464" />
+    <state width="1807" height="282" key="GridCell.Tab.1.left" timestamp="1576929255464">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.1.left/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
     <state width="1874" height="641" key="GridCell.Tab.1.left/1920.0.1920.1080/0.27.1920.1053@0.27.1920.1053" timestamp="1576856903677" />
-    <state width="1807" height="181" key="GridCell.Tab.1.left/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576858185457" />
-    <state width="1807" height="181" key="GridCell.Tab.1.right" timestamp="1576858185457">
+    <state width="1807" height="282" key="GridCell.Tab.1.left/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576929255464" />
+    <state width="1807" height="282" key="GridCell.Tab.1.right" timestamp="1576929255464">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1807" height="340" key="GridCell.Tab.1.right/0.27.3840.1053@0.27.3840.1053" timestamp="1575125121337" />
     <state width="1874" height="641" key="GridCell.Tab.1.right/1920.0.1920.1080/0.27.1920.1053@0.27.1920.1053" timestamp="1576856903677" />
-    <state width="1807" height="181" key="GridCell.Tab.1.right/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576858185457" />
+    <state width="1807" height="282" key="GridCell.Tab.1.right/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1576929255464" />
     <state width="926" height="526" key="XDebugger.FullValuePopup" timestamp="1575230983097">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
@@ -418,8 +427,13 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/master.c</url>
-          <line>204</line>
-          <option name="timeStamp" value="11" />
+          <line>211</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/master.c</url>
+          <line>205</line>
+          <option name="timeStamp" value="16" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
