@@ -23,7 +23,7 @@ flag *flags;
 pawnDirection directives;
 
 
-void pawnHandler() {
+void pawnHandler(int signum) {
     int i;
 #ifdef DEBUG
     printf("%d pawn: game finished, exiting\n", getpid());
@@ -57,7 +57,7 @@ void tookMyFlag() {
     }
 }
 
-void roundEnded() {
+void roundEnded(int signum) {
     directives.newDirectives.movesLeft = 0;
 }
 
@@ -145,8 +145,9 @@ void pawnLife() {
     while (1) {
         /*wait for instructions from player*/
         msgrcv(msgPawn, &directives, sizeof(pawn), getpid(), 0);
-        if (errno == EINTR) {
-            fprintf(stderr, "deep shit \n");
+        while (errno == EINTR) {
+            fprintf(stderr, "deep shit pawn\n");
+            msgrcv(msgPawn, &directives, sizeof(pawn), getpid(), 0);
         }
         semHandling(pawnMoveSem, 0, 0); /*wait for master to start the round*/
 #ifdef DEBUG

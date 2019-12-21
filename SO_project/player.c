@@ -23,7 +23,7 @@ extern int playerSem, roundStartSem, indicationSem;
 int msgPawn, pawnNumber;
 pawn *pawnArray;
 
-void playerHandler() {
+void playerHandler(int signum) {
     int i;
 #ifdef DEBUG
     int childPid = 0;
@@ -49,7 +49,7 @@ void playerHandler() {
     exit(0);
 }
 
-void endRound() {
+void endRound(int signum) {
     int i;
     for (i = 0; i < pawnNumber; ++i) {
         kill(pawnArray[i].pid, SIGUSR2);
@@ -186,8 +186,13 @@ void playerLife(int moves) {
     pawnDirection direction;
 
     flags = shmat(flagShm, NULL, 0);
+    //sleep(10);
     while (1) {
         semHandling(indicationSem, 0, RESERVE);
+        while (errno == EINTR) {
+            fprintf(stderr, "deep shit player\n");
+            semHandling(indicationSem, 0, RESERVE);
+        }
         fprintf(stderr, "started indication\n");
         objectives(flags);
         semHandling(roundStartSem, 0, -1);

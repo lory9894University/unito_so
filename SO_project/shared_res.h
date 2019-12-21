@@ -1,4 +1,4 @@
-#ifndef SO_PROJECT_SHARED_RES_H
+#ifndef SO_PbeaROJECT_SHARED_RES_H
 #define SO_PROJECT_SHARED_RES_H
 #define RESERVE -1
 #define RELEASE 1
