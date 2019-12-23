@@ -84,61 +84,59 @@ void createPawn(int posX, int posY) {
     TEST_ERROR;
     flags = shmat(flagShm, NULL, 0);
     sharedTable->matrix[posY][posX] = 'T';
+    semHandling(sharedTable->semMatrix[posY], posX, RESERVE);
 }
 
 void moving() {
     int yVect, xVect;
+    sleep(3);
     /*attendi sulla coda flagQueue con IPC_NOWAIT e MSG_COPY e msgtype = directives.new.id, nel mentre esegui i tuoi spostamenti*/
-    /*todo: settare una mask quando la pedina ha cancellato la table e toglierla quando la riscrive*/
     while (directives.newDirectives.movesLeft > 0) {
+        printf("%d ", directives.newDirectives.movesLeft);
+#ifdef DEBUG
+        sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = ' ';
+#endif
         yVect = directives.newDirectives.objectiveY - directives.newDirectives.positionY;
         xVect = directives.newDirectives.objectiveX - directives.newDirectives.positionX;
         if (abs(yVect) < abs(xVect)) {
             /*move on X Axis*/
             if (xVect < 0) {
                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
-                            directives.newDirectives.positionX + 1, RESERVE);
-                directives.newDirectives.positionX++;
+                            directives.newDirectives.positionX - 1, RESERVE);
                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
                             directives.newDirectives.positionX, RELEASE);
+                directives.newDirectives.positionX--;
             } else if (xVect > 0) {
                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
-                            directives.newDirectives.positionX - 1, RESERVE);
-                directives.newDirectives.positionX--;
+                            directives.newDirectives.positionX + 1, RESERVE);
                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
                             directives.newDirectives.positionX, RELEASE);
-            } else { /*if the pawn is forced to move on X axis beacause of a deadlock but it's on the right Y axis*/
-                directives.newDirectives.movesLeft++;
-                //todo: in questo caso gli sto solo dicendo di attendere ancora
+                directives.newDirectives.positionX++;
             }
         } else {
             /*move on Y Axis*/
             if (yVect < 0) {
-                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY + 1],
-                            directives.newDirectives.positionX, RESERVE);
-                sharedTable->matrix[directives.newDirectives.positionX][directives.newDirectives.positionY] = ' ';
-                directives.newDirectives.positionX++;
-                sharedTable->matrix[directives.newDirectives.positionX][directives.newDirectives.positionY] = 'T';
-                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
-                            directives.newDirectives.positionX, RELEASE);
-            } else if (yVect > 0) {
                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY - 1],
                             directives.newDirectives.positionX, RESERVE);
-                sharedTable->matrix[directives.newDirectives.positionX][directives.newDirectives.positionY] = ' ';
-                directives.newDirectives.positionX--;
-                sharedTable->matrix[directives.newDirectives.positionX][directives.newDirectives.positionY] = 'T';
                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
                             directives.newDirectives.positionX, RELEASE);
-            } else { /*if the pawn is forced to move on X axis beacause of a deadlock but it's on the right Y axis*/
-                directives.newDirectives.movesLeft++;
-                //todo: in questo caso gli sto solo dicendo di attendere ancora
+                directives.newDirectives.positionY--;
+            } else if (yVect > 0) {
+                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY + 1],
+                            directives.newDirectives.positionX, RESERVE);
+                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
+                            directives.newDirectives.positionX, RELEASE);
+                directives.newDirectives.positionY++;
             }
-
         }
         directives.newDirectives.movesLeft--;
         /*quando prendi una flag invia un messaggio specificando quale bandiera è stata presa sulla coda "flagQueque" con msgtype = flag.id
          * ATTENZIONE ricordati di impostare il campo playerPid nel messaggio, al master serve*/
+#ifdef DEBUG
+        sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = 'T';
+#endif
     }
+
 }
 
 void pawnLife() {
@@ -149,7 +147,9 @@ void pawnLife() {
             fprintf(stderr, "deep shit pawn\n");
             msgrcv(msgPawn, &directives, sizeof(pawn), getpid(), 0);
         }
-        semHandling(pawnMoveSem, 0, 0); /*wait for master to start the round*/
+        if (semHandling(pawnMoveSem, 0, 0) == -1) {
+            perror("error on waiting on pawnMoveSem");
+        } /*wait for master to start the round*/
 #ifdef DEBUG
         fprintf(stderr, "%d directives. posx: %d posy %d, dirx: %d diry: %d\n", getpid(),
                 directives.newDirectives.positionX, directives.newDirectives.positionY,
@@ -157,7 +157,7 @@ void pawnLife() {
 #endif
         /*quando hai finito le mosse, oppure se ricevi il segnale di fine turno invia la tua posizione e le mosse residue al player*/
         sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = ' ';
-        //moving();
+        moving();
         directives.mtype = 1;
         msgsnd(msgPawn, &directives, sizeof(pawn), 0);
         semHandling(pawnMoveSem, 0, RELEASE);

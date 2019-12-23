@@ -205,12 +205,10 @@ int main(int argc, char **argv) {
     semctl(roundStartSem, 0, SETVAL, environment.SO_NUM_G);
     indicationSem = semget(IPC_PRIVATE, 1, 0600);
     semctl(indicationSem, 0, SETVAL, 0);
-    playersCreation(environment.SO_NUM_G, environment.SO_NUM_P);
-
     flagQueue = msgget(IPC_PRIVATE, IPC_CREAT | 0600);
     /*creating a semaphore for moving pawn*/
     pawnMoveSem = semget(IPC_PRIVATE, 1, 0600);
-    TEST_ERROR
+    playersCreation(environment.SO_NUM_G, environment.SO_NUM_P);
 
 
     while (debug < 1) {
@@ -224,7 +222,7 @@ int main(int argc, char **argv) {
         TEST_ERROR
         /*waiting for the players*/
         semHandling(roundStartSem, 0, 0);
-        alarm(3);
+        //alarm(3);
         semHandling(pawnMoveSem, 0, -1); /*round started*/
         for (i = 0; i < flagNum; ++i) {
             //sleep(1);
@@ -232,6 +230,11 @@ int main(int argc, char **argv) {
             /*il master deve ritrasmettere a tutti sun una coda separata i messaggi ricevuti da questa
              * messaggi da leggere con il flag MSG_COPY*/
             /*fai i tuoi inutili calcoli sui punteggi */
+
+        }
+        while (1) {
+            printState(*sharedTable);
+            printf("\n\n\n");
 
         }
         sleep(4);
