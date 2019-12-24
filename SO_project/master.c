@@ -14,7 +14,7 @@
 #include "player.h"
 #include "shared_res.h"
 #include "pawn.h"
-//#define DEBUG
+/*#define DEBUG*/
 
 int shmId, playerSem, flagShm, flagNum, roundStartSem, pawnMoveSem, flagQueue, indicationSem, broadcastQueue, scoreQueue;
 int rounds = 0, roundsTime = 0;
@@ -35,10 +35,10 @@ table *tableCreation(int base, int height) {
     TEST_ERROR;
     myTable = shmat(shmId, NULL, 0);
     TEST_ERROR;
-    //game table definition
+    /*game table definition*/
     myTable->base = base;
     myTable->height = height;
-    shmTemp = shmget(IPC_PRIVATE, sizeof(char) * height, 0600); //todo: questi sono char non int
+    shmTemp = shmget(IPC_PRIVATE, sizeof(char) * height, 0600);
     myTable->matrix = shmat(shmTemp, NULL, 0);
     shmctl(shmTemp, IPC_RMID, NULL);
     shmTemp = shmget(IPC_PRIVATE, sizeof(char) * height, 0600);
@@ -81,10 +81,10 @@ void printState(
     }
     if (!end) {
         printf("\n\n");
-        printf("player\tpid\t\tscore moves left\n");
+        printf("player\tpid\tscore\tmoves left\n");
         for (i = 0; i < environment.SO_NUM_G; ++i) {
             movesLeft = environment.SO_N_MOVES * environment.SO_NUM_P - (playerMoves[i] - lastRoundPlayerMoves[i]);
-            printf("%d\t\t%d\t%d\t\t%d\n", i, players[i], playerScore[i], movesLeft);
+            printf("%d\t%d\t%d\t%d\n", i, players[i], playerScore[i], movesLeft);
             lastRoundPlayerMoves[i] = movesLeft;
         }
     }
@@ -199,9 +199,9 @@ void alarmHandler() {
     }
     pointOverTime = (float) totScore / (float) (roundsTime + 3);
     printf("round played: %d\ntotal points/gametime %f\n", rounds, pointOverTime);
-    printf("player\tpid\t\tmoves used/moves total\t points/moves \n");
+    printf("player\tpid\tmoves used/moves total\t points/moves \n");
     for (i = 0; i < environment.SO_NUM_G; ++i) {
-        printf("%d\t\t%d\t%f\t\t%f\n", i, players[i],
+        printf("%d\t%d\t%f\t\t%f\n", i, players[i],
                (float) playerMoves[i] / (environment.SO_N_MOVES * environment.SO_NUM_P * rounds),
                (float) playerScore[i] / (float) playerMoves[i]);
     }
@@ -257,7 +257,7 @@ int main(int argc, char **argv) {
          * no need to set it before creation because of the wait on msg queue*/
         semctl(pawnMoveSem, 0, SETVAL, 1);
         /*semaphore to start the indication phase*/
-        //sleep(10);
+        /*sleep(10);*/
         semctl(indicationSem, 0, SETVAL, environment.SO_NUM_G);
         debug++;
         TEST_ERROR

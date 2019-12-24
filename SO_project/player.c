@@ -15,7 +15,7 @@
 #include "error_handling.h"
 #include "pawn.h"
 
-//#define DEBUG
+/*#define DEBUG*/
 
 extern int shmId;/*processes already have in their stack the id of the shared mem*/
 extern table *sharedTable;
@@ -75,11 +75,11 @@ pawn *playerBirth(int pawnNum, int numPlayer, int playersTot, int pawnSem, int m
 
 #ifdef DEBUG
     fprintf(stderr, "pid: %d , i'm a player\n", getpid());
-    //sleep(10); /*thanks debugger*/
-    //printf("%d ", shmId);
+    /*sleep(10); /*thanks debugger*/
+    /*printf("%d ", shmId);*/
 #endif
     sharedTable = shmat(shmId, NULL, 0);
-    //TODO: questo costrutto è veramente necessario? il puntatore a sharedTable è già nell'heap
+    /*TODO: questo costrutto è veramente necessario? il puntatore a sharedTable è già nell'heap*/
     TEST_ERROR;
 
     msgPawn = msgget(IPC_PRIVATE, IPC_CREAT | 0600);
@@ -201,15 +201,15 @@ void playerLife(int moves) {
 
 
     flags = shmat(flagShm, NULL, 0);
-    //sleep(10);
+    /*sleep(10);*/
     while (1) {
         score.movesUsed = 0;
         semandlingReturn = semHandling(indicationSem, 0, RESERVE);
         while (errno == EINTR && semandlingReturn == -1) {
-            //fprintf(stderr, "deep shit player\n");
+            /*fprintf(stderr, "deep shit player\n");*/
             semandlingReturn = semHandling(indicationSem, 0, RESERVE);
         }
-        //fprintf(stderr, "started indication\n");
+        /*fprintf(stderr, "started indication\n");*/
         objectives(flags);
         semHandling(roundStartSem, 0, -1);
 #ifdef DEBUG
@@ -223,7 +223,7 @@ void playerLife(int moves) {
                     pawnArray[i].positionY = direction.newDirectives.positionY;
                     pawnArray[i].movesLeft = moves;
                     score.movesUsed += direction.newDirectives.movesUsed;
-                    //printf("%d\n", direction.newDirectives.movesLeft);
+                    /*printf("%d\n", direction.newDirectives.movesLeft);*/
                 }
             }
         }
