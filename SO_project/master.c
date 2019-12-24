@@ -16,12 +16,13 @@
 #include "pawn.h"
 //#define DEBUG
 
-int shmId, playerSem, flagShm, flagNum, roundStartSem, pawnMoveSem, flagQueue, indicationSem, broadcastQueue;
+int shmId, playerSem, flagShm, flagNum, roundStartSem, pawnMoveSem, flagQueue, indicationSem, broadcastQueue, scoreQueue;
+int rounds = 0, roundsTime = 0;
 env environment;
 table *sharedTable;
 pid_t *players;
 flag *flags;
-int *playerScore,* playerMoves;
+int *playerScore, *playerMoves, *lastRoundPlayerMoves;
 
 
 table *tableCreation(int base, int height) {
@@ -58,8 +59,10 @@ table *tableCreation(int base, int height) {
 }
 
 void printState(
-        table myTable) { /*TODO:chiedere al prof come faccio a far entrare una tabella di 120 colonne in uno schermo da 15 pollici */
+        table myTable,
+        int end) { /*TODO:chiedere al prof come faccio a far entrare una tabella di 120 colonne in uno schermo da 15 pollici */
     int i, j, k;
+    int movesLeft;
 
     for (i = 0; i < myTable.base; ++i) {
         printf("----");
@@ -76,10 +79,14 @@ void printState(
         }
         printf("\n");
     }
-    printf("\n\n");
-    printf("player\tpid\t\tscore moves left\n");
-    for (i = 0; i <environment.SO_NUM_G; ++i) {
-        printf("%d\t\t%d\t%d\t\t%d\n",i,players[i],playerScore[i],playerMoves[i]);
+    if (!end) {
+        printf("\n\n");
+        printf("player\tpid\t\tscore moves left\n");
+        for (i = 0; i < environment.SO_NUM_G; ++i) {
+            movesLeft = environment.SO_N_MOVES * environment.SO_NUM_P - (playerMoves[i] - lastRoundPlayerMoves[i]);
+            printf("%d\t\t%d\t%d\t\t%d\n", i, players[i], playerScore[i], movesLeft);
+            lastRoundPlayerMoves[i] = movesLeft;
+        }
     }
 
 }
@@ -181,10 +188,23 @@ void clean() {
 }
 
 void alarmHandler() {
+    int totScore = 0, i = 0;
+    float pointOverTime;
 
     endGame(environment.SO_NUM_G);
     while (wait(NULL) != -1);
-    printState(*sharedTable);
+    printState(*sharedTable, 1);
+    for (i = 0; i < environment.SO_NUM_G; ++i) {
+        totScore += playerScore[i];
+    }
+    pointOverTime = (float) totScore / (float) (roundsTime + 3);
+    printf("round played: %d\ntotal points/gametime %f\n", rounds, pointOverTime);
+    printf("player\tpid\t\tmoves used/moves total\t points/moves \n");
+    for (i = 0; i < environment.SO_NUM_G; ++i) {
+        printf("%d\t\t%d\t%f\t\t%f\n", i, players[i],
+               (float) playerMoves[i] / (environment.SO_N_MOVES * environment.SO_NUM_P * rounds),
+               (float) playerScore[i] / (float) playerMoves[i]);
+    }
     clean();
 
     exit(0);
@@ -196,6 +216,7 @@ int main(int argc, char **argv) {
     int debug = 0;
     int i, j;
     msgFlag message;
+    msgScore score;
 
     /*sigaction setting*/
     bzero(&sa, sizeof(sa));
@@ -208,12 +229,14 @@ int main(int argc, char **argv) {
     sharedTable = tableCreation(environment.SO_BASE, environment.SO_ALTEZZA);
     flagShm = shmget(IPC_PRIVATE, sizeof(flag) * environment.SO_FLAG_MAX, 0600);
     flags = shmat(flagShm, NULL, 0);
+    scoreQueue = msgget(IPC_PRIVATE, IPC_CREAT | 0600);
     flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX, environment.SO_ROUND_SCORE);
 
     playerScore = malloc(sizeof(int) * environment.SO_NUM_G);
     playerMoves = malloc(sizeof(int) * environment.SO_NUM_G);
+    lastRoundPlayerMoves = malloc(sizeof(int) * environment.SO_NUM_G);
     for (i = 0; i <environment.SO_NUM_G ; ++i) {
-        playerMoves[i]=playerScore[i]=0;
+        playerMoves[i] = playerScore[i] = lastRoundPlayerMoves[i] = 0;
     }
 
     /*creating a semaphore for starting round before the creation of the players, otherwise they may run before the master and
@@ -240,6 +263,7 @@ int main(int argc, char **argv) {
         TEST_ERROR
         /*waiting for the plgayers*/
         semHandling(roundStartSem, 0, 0);
+        rounds++;
         alarm(3);
         semHandling(pawnMoveSem, 0, -1); /*round started*/
         for (i = 0; i < flagNum; ++i) {
@@ -256,12 +280,20 @@ int main(int argc, char **argv) {
             }
         }
         printf("all flags taken\n");
-        alarm(0);
+        roundsTime = alarm(0);
         semctl(pawnMoveSem, 0, SETVAL, 1);
         for (i = 0; i < environment.SO_NUM_G; ++i) {
             kill(players[i], SIGUSR2);
         }
-        printState(*sharedTable);
+        for (i = 0; i < environment.SO_NUM_G; ++i) {
+            msgrcv(scoreQueue, &score, sizeof(int), 0, 0);
+            for (j = 0; j < environment.SO_NUM_G; ++j) {
+                if (players[j] == score.playerPid) {
+                    playerMoves[j] = score.movesUsed;
+                }
+            }
+        }
+        printState(*sharedTable, 0);
         /* tu rimani in attesa di messaggi(aka le flag prese)
          * quando tutte le flag sono state prese, riavvia il ciclo, superati i SO_MAX_TIME secondi parte l'handler
          * */

@@ -193,7 +193,7 @@ void objectives(flag *flags) {
 
 void playerLife(int moves) {
     flag *flags;
-    extern int flagShm;
+    extern int flagShm, scoreQueue;
     int i = 0, j;
     pawnDirection direction;
     int semandlingReturn;
@@ -227,7 +227,7 @@ void playerLife(int moves) {
                 }
             }
         }
-
-
+        score.playerPid = getpid();
+        msgsnd(scoreQueue, &score, sizeof(int), 0);
     }
 }
