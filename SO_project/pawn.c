@@ -14,7 +14,7 @@
 #include <string.h>
 #include <sys/msg.h>
 
-//#define DEBUG
+/*#define DEBUG*/
 
 extern int shmId, flagShm;
 extern int pawnMoveSem, msgPawn, flagQueue, broadcastQueue;
@@ -30,7 +30,6 @@ void pawnHandler(int signum) {
     printf("%d %d\n", directives.newDirectives.positionY, directives.newDirectives.positionX);
 #endif
     sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = 'T';
-    //sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX]='T';
     for (i = 0; i < sharedTable->height; ++i) {
         shmdt(sharedTable->matrix[i]);
     }
@@ -76,7 +75,7 @@ void createPawn(int posX, int posY) {
 
 #ifdef DEBUG
     fprintf(stderr, "pid: %d , i'm a pawn. created by %d\n", getpid(), getppid());
-    //sleep(10); /*thanks debugger*/
+    /*sleep(10); /*thanks debugger*/
 #endif
 
     sharedTable = shmat(shmId, NULL, 0);
@@ -173,7 +172,7 @@ void pawnLife() {
         /*wait for instructions from player*/
         msgReturn = msgrcv(msgPawn, &directives, sizeof(pawn), getpid(), 0);
         while (errno == EINTR && msgReturn == -1) {
-            //fprintf(stderr, "deep shit pawn\n");
+            /*fprintf(stderr, "deep shit pawn\n");*/
             msgReturn = msgrcv(msgPawn, &directives, sizeof(pawn), getpid(), 0);
         }
         debugReturnSemop = semHandling(pawnMoveSem, 0, 0);

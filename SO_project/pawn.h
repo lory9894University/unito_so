@@ -22,4 +22,4 @@ void createPawn(int posX, int posY);
 
 void pawnLife();
 
-#endif //SO_PROJECT_PAWN_H
+#endif /*SO_PROJECT_PAWN_H*/

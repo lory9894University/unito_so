@@ -14,9 +14,9 @@
                       getpid(),            \
                       errno,            \
                       strerror(errno));}
-//macro ricavata dalle dispense del prof. Bini, mi sembra corretto specificarlo //TODO: lo lascio sto commento?
+/*macro ricavata dalle dispense del prof. Bini, mi sembra corretto specificarlo */
 
 #define GEN_ERROR printf("error: %s", errorString); exit(1);
 
-#endif //SO_PROJECT_ERROR_HANDLING
+#endif /*SO_PROJECT_ERROR_HANDLING*/
 
