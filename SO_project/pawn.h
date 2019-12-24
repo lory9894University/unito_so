@@ -8,7 +8,7 @@ typedef struct {
     int positionX, positionY;
     int objectiveX, objectiveY, objectiveId;
     int objective2X, objective2Y, objective2Id;
-    int movesLeft;
+    int movesLeft, movesUsed;
     pid_t pid;
 
 } pawn;
