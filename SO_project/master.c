@@ -21,6 +21,8 @@ env environment;
 table *sharedTable;
 pid_t *players;
 flag *flags;
+int *playerScore,* playerMoves;
+
 
 table *tableCreation(int base, int height) {
     table *myTable;
@@ -74,6 +76,12 @@ void printState(
         }
         printf("\n");
     }
+    printf("\n\n");
+    printf("player\tpid\t\tscore moves left\n");
+    for (i = 0; i <environment.SO_NUM_G; ++i) {
+        printf("%d\t\t%d\t%d\t\t%d\n",i,players[i],playerScore[i],playerMoves[i]);
+    }
+
 }
 
 void flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScore) {
@@ -188,9 +196,7 @@ int main(int argc, char **argv) {
     int debug = 0;
     int i, j;
     msgFlag message;
-    int *playerScore;
 
-    playerScore = malloc(sizeof(int) * environment.SO_NUM_G);
     /*sigaction setting*/
     bzero(&sa, sizeof(sa));
     sa.sa_handler = alarmHandler;
@@ -203,6 +209,12 @@ int main(int argc, char **argv) {
     flagShm = shmget(IPC_PRIVATE, sizeof(flag) * environment.SO_FLAG_MAX, 0600);
     flags = shmat(flagShm, NULL, 0);
     flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX, environment.SO_ROUND_SCORE);
+
+    playerScore = malloc(sizeof(int) * environment.SO_NUM_G);
+    playerMoves = malloc(sizeof(int) * environment.SO_NUM_G);
+    for (i = 0; i <environment.SO_NUM_G ; ++i) {
+        playerMoves[i]=playerScore[i]=0;
+    }
 
     /*creating a semaphore for starting round before the creation of the players, otherwise they may run before the master and
      * start the game before the master is ready*/
