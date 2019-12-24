@@ -15,7 +15,7 @@
 #include "error_handling.h"
 #include "pawn.h"
 
-#define DEBUG
+//#define DEBUG
 
 extern int shmId;/*processes already have in their stack the id of the shared mem*/
 extern table *sharedTable;
@@ -130,11 +130,12 @@ void objectives(flag *flags) {
     for (i = 0; i < flagNum; ++i) {
         flagObjective[i] = 0;
     }
+    /*closest flag to every pawn*/
     for (i = 0; i < pawnNumber; ++i) {
         distanceBest = 0;
         distanceLocal = 0;
         for (j = 0; j < flagNum; ++j) {
-            distanceLocal = (pawnArray[i].positionX - flags[j].xPos) + (pawnArray[i].positionY - flags[j].yPos);
+            distanceLocal = abs(pawnArray[i].positionX - flags[j].xPos) + abs(pawnArray[i].positionY - flags[j].yPos);
             if ((distanceLocal < distanceBest || distanceBest == 0)) {
                 distanceBest = distanceLocal;
                 bestFlag = j;
@@ -143,7 +144,7 @@ void objectives(flag *flags) {
         distanceBest = 0;
         distanceLocal = 0;
         for (j = 0; j < flagNum; ++j) {
-            distanceLocal = (pawnArray[i].positionX - flags[j].xPos) + (pawnArray[i].positionY - flags[j].yPos);
+            distanceLocal = abs(pawnArray[i].positionX - flags[j].xPos) + abs(pawnArray[i].positionY - flags[j].yPos);
             if ((distanceLocal < distanceBest || distanceBest == 0) && j != bestFlag) {
                 distanceBest = distanceLocal;
                 secondBestFlag = j;
@@ -156,12 +157,13 @@ void objectives(flag *flags) {
         pawnArray[i].objective2Y = flags[secondBestFlag].yPos;
         pawnArray[i].objective2Id = flags[secondBestFlag].id;
     }
+    /* closest pawn to the flags not token
     distanceBest = 0;
     distanceLocal = 0;
     for (i = 0; i < flagNum; ++i) {
         if (flagObjective[i] == 0) {
             for (j = 0; j < pawnNumber; ++j) {
-                distanceLocal = (pawnArray[j].positionX - flags[i].xPos) + (pawnArray[j].positionY - flags[i].yPos);
+                distanceLocal = abs(pawnArray[j].positionX - flags[i].xPos) + abs(pawnArray[j].positionY - flags[i].yPos);
                 if ((distanceLocal < distanceBest || distanceBest == 0)) {
                     distanceBest = distanceLocal;
                     bestPawn = j;
@@ -172,11 +174,21 @@ void objectives(flag *flags) {
             }
         }
     }
+    */
     for (i = 0; i < pawnNumber; ++i) {
         directives.mtype = pawnArray[i].pid;
         directives.newDirectives = pawnArray[i];
+        /* todo: scoprire perchè funziona
+        directives.newDirectives.objectiveX = pawnArray[i].objectiveX;
+        directives.newDirectives.objectiveY = pawnArray[i].objectiveY;
+        directives.newDirectives.objectiveId = pawnArray[i].objectiveId;
+        directives.newDirectives.objective2X = pawnArray[i].objective2X;
+        directives.newDirectives.objective2Y = pawnArray[i].objective2Y;
+        directives.newDirectives.objective2Id = pawnArray[i].objective2Id;
+         */
         msgsnd(msgPawn, &directives, sizeof(pawn), 0);
     }
+    fprintf(stderr, "\n");
 }
 
 void playerLife(int moves) {
@@ -184,16 +196,17 @@ void playerLife(int moves) {
     extern int flagShm;
     int i = 0, j;
     pawnDirection direction;
+    int semandlingReturn;
 
     flags = shmat(flagShm, NULL, 0);
     //sleep(10);
     while (1) {
-        semHandling(indicationSem, 0, RESERVE);
-        while (errno == EINTR) {
-            fprintf(stderr, "deep shit player\n");
-            semHandling(indicationSem, 0, RESERVE);
+        semandlingReturn = semHandling(indicationSem, 0, RESERVE);
+        while (errno == EINTR && semandlingReturn == -1) {
+            //fprintf(stderr, "deep shit player\n");
+            semandlingReturn = semHandling(indicationSem, 0, RESERVE);
         }
-        fprintf(stderr, "started indication\n");
+        //fprintf(stderr, "started indication\n");
         objectives(flags);
         semHandling(roundStartSem, 0, -1);
 #ifdef DEBUG
@@ -202,11 +215,11 @@ void playerLife(int moves) {
         for (i = 0; i < pawnNumber; ++i) {
             msgrcv(msgPawn, &direction, sizeof(pawn), 1, 0);
             for (j = 0; j < pawnNumber; ++j) {
-                if (direction.mtype == pawnArray[j].pid) {
+                if (direction.newDirectives.pid == pawnArray[j].pid) {
                     pawnArray[i].positionX = direction.newDirectives.positionX;
                     pawnArray[i].positionY = direction.newDirectives.positionY;
                     pawnArray[i].movesLeft = moves;
-                    printf("%d\n", direction.newDirectives.movesLeft);
+                    //printf("%d\n", direction.newDirectives.movesLeft);
                 }
             }
         }

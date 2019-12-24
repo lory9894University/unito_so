@@ -16,10 +16,11 @@
 #include "pawn.h"
 //#define DEBUG
 
-int shmId, playerSem, flagShm, flagNum, roundStartSem, pawnMoveSem, flagQueue, indicationSem;
+int shmId, playerSem, flagShm, flagNum, roundStartSem, pawnMoveSem, flagQueue, indicationSem, broadcastQueue;
 env environment;
 table *sharedTable;
 pid_t *players;
+flag *flags;
 
 table *tableCreation(int base, int height) {
     table *myTable;
@@ -79,12 +80,9 @@ void flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScore
     int flagNotValued;
     int X, Y, positionOccupied;
     int i;
-    flag *flags;
 
     srand(getpid());
     flagNotValued = flagNum = ((rand() % (maxFlag - (minFlag - 1))) + minFlag);
-    flagShm = shmget(IPC_PRIVATE, sizeof(flag) * flagNum, 0600);
-    flags = shmat(flagShm, NULL, 0);
 
     /*i giocatori devono sapere il valore della bandiera?*/
     for (i = 0; i < flagNum; ++i) {
@@ -92,7 +90,7 @@ void flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScore
         flags[i].value = (rand() % (roundScore - flagNotValued--) + 1);
         roundScore -= flags[i].value;
         flags[i].taken = 0;
-        flags[i].id = i;
+        flags[i].id = i + 1;
 
         /*flag position randomly assigned, if the position is already occupied it calculate a nev position*/
         positionOccupied = 1;
@@ -164,7 +162,10 @@ void clean() {
         shmdt(sharedTable->matrix[i]);
     }
     msgctl(flagQueue, IPC_RMID, NULL);
+    msgctl(broadcastQueue, IPC_RMID, NULL);
     shmctl(shmId, IPC_RMID, NULL);
+    shmctl(flagShm, IPC_RMID, NULL);
+    shmdt(flags);
     shmdt(sharedTable->semMatrix);
     shmdt(sharedTable->matrix);
     shmdt(sharedTable);
@@ -181,13 +182,15 @@ void alarmHandler() {
     exit(0);
 }
 
+
 int main(int argc, char **argv) {
     struct sigaction sa;
     int debug = 0;
-    int i;
+    int i, j;
     msgFlag message;
+    int *playerScore;
 
-
+    playerScore = malloc(sizeof(int) * environment.SO_NUM_G);
     /*sigaction setting*/
     bzero(&sa, sizeof(sa));
     sa.sa_handler = alarmHandler;
@@ -197,6 +200,8 @@ int main(int argc, char **argv) {
     setvbuf(stdout, NULL, _IONBF, 0);
     envReading(environ, &environment);
     sharedTable = tableCreation(environment.SO_BASE, environment.SO_ALTEZZA);
+    flagShm = shmget(IPC_PRIVATE, sizeof(flag) * environment.SO_FLAG_MAX, 0600);
+    flags = shmat(flagShm, NULL, 0);
     flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX, environment.SO_ROUND_SCORE);
 
     /*creating a semaphore for starting round before the creation of the players, otherwise they may run before the master and
@@ -206,12 +211,13 @@ int main(int argc, char **argv) {
     indicationSem = semget(IPC_PRIVATE, 1, 0600);
     semctl(indicationSem, 0, SETVAL, 0);
     flagQueue = msgget(IPC_PRIVATE, IPC_CREAT | 0600);
+    broadcastQueue = msgget(IPC_PRIVATE, IPC_CREAT | 0600);
     /*creating a semaphore for moving pawn*/
     pawnMoveSem = semget(IPC_PRIVATE, 1, 0600);
     playersCreation(environment.SO_NUM_G, environment.SO_NUM_P);
 
 
-    while (debug < 1) {
+    while (1) {
         /*setting a semaphore to prevent the pawn from moving
          * no need to set it before creation because of the wait on msg queue*/
         semctl(pawnMoveSem, 0, SETVAL, 1);
@@ -220,29 +226,30 @@ int main(int argc, char **argv) {
         semctl(indicationSem, 0, SETVAL, environment.SO_NUM_G);
         debug++;
         TEST_ERROR
-        /*waiting for the players*/
+        /*waiting for the plgayers*/
         semHandling(roundStartSem, 0, 0);
-        //alarm(3);
+        alarm(3);
         semHandling(pawnMoveSem, 0, -1); /*round started*/
         for (i = 0; i < flagNum; ++i) {
-            //sleep(1);
-            //msgrcv(flagQueue, &message, sizeof(int) * 2, 0, 0);
+            msgrcv(flagQueue, &message, sizeof(int) * 2, 0, 0);
+            fprintf(stderr, "flag %d received\n", message.id);
             /*il master deve ritrasmettere a tutti sun una coda separata i messaggi ricevuti da questa
              * messaggi da leggere con il flag MSG_COPY*/
+            msgsnd(broadcastQueue, &message, sizeof(int) * 2, 0);
             /*fai i tuoi inutili calcoli sui punteggi */
-
+            for (j = 0; j < environment.SO_NUM_G; ++j) {
+                if (players[j] == message.playerPid) {
+                    playerScore[j] += flags[message.id - 1].value;
+                }
+            }
         }
-        while (1) {
-            printState(*sharedTable);
-            printf("\n\n\n");
-
-        }
-        sleep(4);
+        printf("all flags taken\n");
         alarm(0);
         semctl(pawnMoveSem, 0, SETVAL, 1);
         for (i = 0; i < environment.SO_NUM_G; ++i) {
             kill(players[i], SIGUSR2);
         }
+        printState(*sharedTable);
         /* tu rimani in attesa di messaggi(aka le flag prese)
          * quando tutte le flag sono state prese, riavvia il ciclo, superati i SO_MAX_TIME secondi parte l'handler
          * */
@@ -250,6 +257,5 @@ int main(int argc, char **argv) {
                          environment.SO_ROUND_SCORE);
         semctl(roundStartSem, 0, SETVAL, environment.SO_NUM_G);
     }
-
     return 0;
 }

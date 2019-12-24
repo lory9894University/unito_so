@@ -14,10 +14,10 @@
 #include <string.h>
 #include <sys/msg.h>
 
-#define DEBUG
+//#define DEBUG
 
 extern int shmId, flagShm;
-extern int pawnMoveSem, msgPawn;
+extern int pawnMoveSem, msgPawn, flagQueue, broadcastQueue;
 table *sharedTable;
 flag *flags;
 pawnDirection directives;
@@ -59,6 +59,7 @@ void tookMyFlag() {
 
 void roundEnded(int signum) {
     directives.newDirectives.movesLeft = 0;
+    sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = 'T';
 }
 
 void createPawn(int posX, int posY) {
@@ -71,9 +72,7 @@ void createPawn(int posX, int posY) {
 
     bzero(&se, sizeof(se));
     se.sa_handler = roundEnded;
-    se.sa_flags = SA_RESTART;
     sigaction(SIGUSR2, &se, NULL);
-
 
 #ifdef DEBUG
     fprintf(stderr, "pid: %d , i'm a pawn. created by %d\n", getpid(), getppid());
@@ -89,25 +88,48 @@ void createPawn(int posX, int posY) {
 
 void moving() {
     int yVect, xVect;
-    sleep(3);
+    msgFlag message;
     /*attendi sulla coda flagQueue con IPC_NOWAIT e MSG_COPY e msgtype = directives.new.id, nel mentre esegui i tuoi spostamenti*/
     while (directives.newDirectives.movesLeft > 0) {
-        printf("%d ", directives.newDirectives.movesLeft);
 #ifdef DEBUG
         sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = ' ';
+        printf("%d ", directives.newDirectives.movesLeft);
 #endif
+        msgrcv(broadcastQueue, &message, sizeof(int) * 2, directives.newDirectives.objectiveId, IPC_NOWAIT | MSG_COPY);
+        if (errno != ENOMSG) {
+            tookMyFlag();
+        }
         yVect = directives.newDirectives.objectiveY - directives.newDirectives.positionY;
         xVect = directives.newDirectives.objectiveX - directives.newDirectives.positionX;
-        if (abs(yVect) < abs(xVect)) {
-            /*move on X Axis*/
-            if (xVect < 0) {
-                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
-                            directives.newDirectives.positionX - 1, RESERVE);
-                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
-                            directives.newDirectives.positionX, RELEASE);
-                directives.newDirectives.positionX--;
-            } else if (xVect > 0) {
-                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
+        if (abs(xVect) + abs(yVect) > directives.newDirectives.movesLeft) {
+            tookMyFlag();
+            yVect = directives.newDirectives.objectiveY - directives.newDirectives.positionY;
+            xVect = directives.newDirectives.objectiveX - directives.newDirectives.positionX;
+        }
+        /*flag not reachable*/
+        if (directives.newDirectives.objectiveId == -1)
+            break;
+        if (yVect == 0 && xVect == 0) {
+            fprintf(stderr, "flag %d taken\n", directives.newDirectives.objectiveId);
+            message.id = directives.newDirectives.objectiveId;
+            message.playerPid = getppid();
+            message.mtype = message.id;
+            msgsnd(flagQueue, &message, sizeof(int) * 2, 0);
+            /*to avoid waisting CPU time the pawn now change objective without waiting master broadcast
+             * other implementation could be taking the flag and waiting the message from the master saying that the flag is taken
+             * but this pawn already knows that*/
+            tookMyFlag();
+        } else {
+            if (abs(yVect) < abs(xVect)) {
+                /*move on X Axis*/
+                if (xVect < 0) {
+                    semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
+                                directives.newDirectives.positionX - 1, RESERVE);
+                    semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
+                                directives.newDirectives.positionX, RELEASE);
+                    directives.newDirectives.positionX--;
+                } else if (xVect > 0) {
+                    semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
                             directives.newDirectives.positionX + 1, RESERVE);
                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
                             directives.newDirectives.positionX, RELEASE);
@@ -130,6 +152,7 @@ void moving() {
             }
         }
         directives.newDirectives.movesLeft--;
+        }
         /*quando prendi una flag invia un messaggio specificando quale bandiera è stata presa sulla coda "flagQueque" con msgtype = flag.id
          * ATTENZIONE ricordati di impostare il campo playerPid nel messaggio, al master serve*/
 #ifdef DEBUG
@@ -140,26 +163,32 @@ void moving() {
 }
 
 void pawnLife() {
+    int debugReturnSemop;
+    int msgReturn;
+
     while (1) {
         /*wait for instructions from player*/
-        msgrcv(msgPawn, &directives, sizeof(pawn), getpid(), 0);
-        while (errno == EINTR) {
-            fprintf(stderr, "deep shit pawn\n");
-            msgrcv(msgPawn, &directives, sizeof(pawn), getpid(), 0);
+        msgReturn = msgrcv(msgPawn, &directives, sizeof(pawn), getpid(), 0);
+        while (errno == EINTR && msgReturn == -1) {
+            //fprintf(stderr, "deep shit pawn\n");
+            msgReturn = msgrcv(msgPawn, &directives, sizeof(pawn), getpid(), 0);
         }
-        if (semHandling(pawnMoveSem, 0, 0) == -1) {
-            perror("error on waiting on pawnMoveSem");
+        debugReturnSemop = semHandling(pawnMoveSem, 0, 0);
+        while (errno == EINTR) {
+            debugReturnSemop = semHandling(pawnMoveSem, 0, 0);
         } /*wait for master to start the round*/
+        if (debugReturnSemop) {
+            perror("error on waiting on pawnMoveSem");
+        }
 #ifdef DEBUG
         fprintf(stderr, "%d directives. posx: %d posy %d, dirx: %d diry: %d\n", getpid(),
                 directives.newDirectives.positionX, directives.newDirectives.positionY,
                 directives.newDirectives.objectiveX, directives.newDirectives.objectiveY);
 #endif
-        /*quando hai finito le mosse, oppure se ricevi il segnale di fine turno invia la tua posizione e le mosse residue al player*/
         sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = ' ';
         moving();
+        /*quando hai finito le mosse, oppure se ricevi il segnale di fine turno invia la tua posizione e le mosse residue al player*/
         directives.mtype = 1;
         msgsnd(msgPawn, &directives, sizeof(pawn), 0);
-        semHandling(pawnMoveSem, 0, RELEASE);
     }
 }
