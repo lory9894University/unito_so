@@ -24,7 +24,7 @@ typedef struct {
 } msgFlag;
 
 typedef struct {
-    long score;
+    long movesUsed;
     int playerPid;
 } msgScore;
 

@@ -197,10 +197,13 @@ void playerLife(int moves) {
     int i = 0, j;
     pawnDirection direction;
     int semandlingReturn;
+    msgScore score;
+
 
     flags = shmat(flagShm, NULL, 0);
     //sleep(10);
     while (1) {
+        score.movesUsed = 0;
         semandlingReturn = semHandling(indicationSem, 0, RESERVE);
         while (errno == EINTR && semandlingReturn == -1) {
             //fprintf(stderr, "deep shit player\n");
@@ -219,6 +222,7 @@ void playerLife(int moves) {
                     pawnArray[i].positionX = direction.newDirectives.positionX;
                     pawnArray[i].positionY = direction.newDirectives.positionY;
                     pawnArray[i].movesLeft = moves;
+                    score.movesUsed += direction.newDirectives.movesUsed;
                     //printf("%d\n", direction.newDirectives.movesLeft);
                 }
             }

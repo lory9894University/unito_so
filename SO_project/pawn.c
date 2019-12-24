@@ -90,6 +90,7 @@ void moving() {
     int yVect, xVect;
     msgFlag message;
     /*attendi sulla coda flagQueue con IPC_NOWAIT e MSG_COPY e msgtype = directives.new.id, nel mentre esegui i tuoi spostamenti*/
+    directives.newDirectives.movesUsed = 0;
     while (directives.newDirectives.movesLeft > 0) {
 #ifdef DEBUG
         sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = ' ';
@@ -150,8 +151,10 @@ void moving() {
                             directives.newDirectives.positionX, RELEASE);
                 directives.newDirectives.positionY++;
             }
-        }
-        directives.newDirectives.movesLeft--;
+            }
+            directives.newDirectives.movesLeft--;
+            directives.newDirectives.movesUsed++;
+
         }
         /*quando prendi una flag invia un messaggio specificando quale bandiera è stata presa sulla coda "flagQueque" con msgtype = flag.id
          * ATTENZIONE ricordati di impostare il campo playerPid nel messaggio, al master serve*/
