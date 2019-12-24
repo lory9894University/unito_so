@@ -23,6 +23,11 @@ typedef struct {
     int playerPid;
 } msgFlag;
 
+typedef struct {
+    long score;
+    int playerPid;
+} msgScore;
+
 /*semOp, 1 release, -1 reserve*/
 int semHandling(int semId, int semNum, int semOp);
 
