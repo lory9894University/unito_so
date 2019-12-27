@@ -86,6 +86,7 @@ void createPawn(int posX, int posY) {
 void moving() {
     int yVect, xVect;
     msgFlag message;
+    int handlingReturn;
     /*attendi sulla coda flagQueue con IPC_NOWAIT e MSG_COPY e msgtype = directives.new.id, nel mentre esegui i tuoi spostamenti*/
     directives.newDirectives.movesUsed = 0;
     while (directives.newDirectives.movesLeft > 0) {
@@ -121,37 +122,161 @@ void moving() {
             if (abs(yVect) < abs(xVect)) {
                 /*move on X Axis*/
                 if (xVect < 0) {
-                    semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
-                                directives.newDirectives.positionX - 1, RESERVE);
-                    semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
-                                directives.newDirectives.positionX, RELEASE);
-                    nanosleep(&thold, NULL);
-                    directives.newDirectives.positionX--;
-                } else if (xVect > 0) {
-                    semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
-                            directives.newDirectives.positionX + 1, RESERVE);
-                    semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
-                                directives.newDirectives.positionX, RELEASE);
-                    nanosleep(&thold, NULL);
-                    directives.newDirectives.positionX++;
-            }
+                    handlingReturn = semHandlingTimed(sharedTable->semMatrix[directives.newDirectives.positionY],
+                                                      directives.newDirectives.positionX - 1, RESERVE);
+                    if (handlingReturn == -1 && errno == EAGAIN) {
+                        /*move on Y Axis*/
+                        if (yVect < 0) {
+                            handlingReturn = semHandlingTimed(
+                                    sharedTable->semMatrix[directives.newDirectives.positionY - 1],
+                                    directives.newDirectives.positionX, RESERVE);
+                            if (handlingReturn == -1 && errno == EAGAIN) {
+                                /*send message stuck*/
+                                directives.newDirectives.movesLeft++;
+                            } else {
+                                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
+                                            directives.newDirectives.positionX, RELEASE);
+                                nanosleep(&thold, NULL);
+                                directives.newDirectives.positionY--;
+                            }
+                        } else if (yVect > 0) {
+                            handlingReturn = semHandlingTimed(
+                                    sharedTable->semMatrix[directives.newDirectives.positionY + 1],
+                                    directives.newDirectives.positionX, RESERVE);
+                            if (handlingReturn == -1 && errno == EAGAIN) {
+                                /*send message stuck*/
+                                directives.newDirectives.movesLeft++;
+                            } else {
+                                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
+                                            directives.newDirectives.positionX, RELEASE);
+                                nanosleep(&thold, NULL);
+                                directives.newDirectives.positionY++;
+                            }
+                        }
+                    } else {
+                        semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
+                                    directives.newDirectives.positionX, RELEASE);
+                        nanosleep(&thold, NULL);
+                        directives.newDirectives.positionX--;
+                    }
+                } else {
+                    handlingReturn = semHandlingTimed(sharedTable->semMatrix[directives.newDirectives.positionY],
+                                                      directives.newDirectives.positionX + 1, RESERVE);
+                    if (handlingReturn == -1 && errno == EAGAIN) {
+                        /*move on Y Axis*/
+                        if (yVect < 0) {
+                            handlingReturn = semHandlingTimed(
+                                    sharedTable->semMatrix[directives.newDirectives.positionY - 1],
+                                    directives.newDirectives.positionX, RESERVE);
+                            if (handlingReturn == -1 && errno == EAGAIN) {
+                                /*send message stuck*/
+                                directives.newDirectives.movesLeft++;
+                            } else {
+                                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
+                                            directives.newDirectives.positionX, RELEASE);
+                                nanosleep(&thold, NULL);
+                                directives.newDirectives.positionY--;
+                            }
+                        } else if (yVect > 0) {
+                            handlingReturn = semHandlingTimed(
+                                    sharedTable->semMatrix[directives.newDirectives.positionY + 1],
+                                    directives.newDirectives.positionX, RESERVE);
+                            if (handlingReturn == -1 && errno == EAGAIN) {
+                                /*send message stuck*/
+                                directives.newDirectives.movesLeft++;
+                            } else {
+                                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
+                                            directives.newDirectives.positionX, RELEASE);
+                                nanosleep(&thold, NULL);
+                                directives.newDirectives.positionY++;
+                            }
+                        }
+                    } else {
+                        semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
+                                    directives.newDirectives.positionX, RELEASE);
+                        nanosleep(&thold, NULL);
+                        directives.newDirectives.positionX++;
+                    }
+                }
         } else {
-            /*move on Y Axis*/
-            if (yVect < 0) {
-                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY - 1],
-                            directives.newDirectives.positionX, RESERVE);
-                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
-                            directives.newDirectives.positionX, RELEASE);
-                nanosleep(&thold, NULL);
-                directives.newDirectives.positionY--;
-            } else if (yVect > 0) {
-                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY + 1],
-                            directives.newDirectives.positionX, RESERVE);
-                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
-                            directives.newDirectives.positionX, RELEASE);
-                nanosleep(&thold, NULL);
-                directives.newDirectives.positionY++;
-            }
+                /*move on Y Axis*/
+                if (yVect < 0) {
+                    handlingReturn = semHandlingTimed(sharedTable->semMatrix[directives.newDirectives.positionY - 1],
+                                                      directives.newDirectives.positionX, RESERVE);
+                    if (handlingReturn == -1 && errno == EAGAIN) {
+                        /*move on X Axis*/
+                        if (xVect < 0) {
+                            handlingReturn = semHandlingTimed(
+                                    sharedTable->semMatrix[directives.newDirectives.positionY],
+                                    directives.newDirectives.positionX - 1, RESERVE);
+                            if (handlingReturn == -1 && errno == EAGAIN) {
+                                /*send message stuck*/
+                                directives.newDirectives.movesLeft++;
+                            } else {
+                                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
+                                            directives.newDirectives.positionX, RELEASE);
+                                nanosleep(&thold, NULL);
+                                directives.newDirectives.positionX--;
+                            }
+                        } else {
+                            handlingReturn = semHandlingTimed(
+                                    sharedTable->semMatrix[directives.newDirectives.positionY],
+                                    directives.newDirectives.positionX + 1, RESERVE);
+                            if (handlingReturn == -1 && errno == EAGAIN) {
+                                /*todo:send message stuck*/
+                                directives.newDirectives.movesLeft++;
+                            } else {
+                                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
+                                            directives.newDirectives.positionX, RELEASE);
+                                nanosleep(&thold, NULL);
+                                directives.newDirectives.positionX++;
+                            }
+                        }
+                    } else {
+                        semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
+                                    directives.newDirectives.positionX, RELEASE);
+                        nanosleep(&thold, NULL);
+                        directives.newDirectives.positionY--;
+                    }
+                } else {
+                    handlingReturn = semHandlingTimed(sharedTable->semMatrix[directives.newDirectives.positionY + 1],
+                                                      directives.newDirectives.positionX, RESERVE);
+                    if (handlingReturn == -1 && errno == EAGAIN) {
+                        /*move on X Axis*/
+                        if (xVect < 0) {
+                            handlingReturn = semHandlingTimed(
+                                    sharedTable->semMatrix[directives.newDirectives.positionY],
+                                    directives.newDirectives.positionX - 1, RESERVE);
+                            if (handlingReturn == -1 && errno == EAGAIN) {
+                                /*send message stuck*/
+                                directives.newDirectives.movesLeft++;
+                            } else {
+                                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
+                                            directives.newDirectives.positionX, RELEASE);
+                                nanosleep(&thold, NULL);
+                                directives.newDirectives.positionX--;
+                            }
+                        } else {
+                            handlingReturn = semHandlingTimed(
+                                    sharedTable->semMatrix[directives.newDirectives.positionY],
+                                    directives.newDirectives.positionX + 1, RESERVE);
+                            if (handlingReturn == -1 && errno == EAGAIN) {
+                                /*todo:send message stuck*/
+                                directives.newDirectives.movesLeft++;
+                            } else {
+                                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
+                                            directives.newDirectives.positionX, RELEASE);
+                                nanosleep(&thold, NULL);
+                                directives.newDirectives.positionX++;
+                            }
+                        }
+                    } else {
+                        semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
+                                    directives.newDirectives.positionX, RELEASE);
+                        nanosleep(&thold, NULL);
+                        directives.newDirectives.positionY++;
+                    }
+                }
             }
             directives.newDirectives.movesLeft--;
             directives.newDirectives.movesUsed++;
