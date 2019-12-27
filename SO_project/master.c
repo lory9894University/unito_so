@@ -18,6 +18,7 @@
 
 int shmId, playerSem, flagShm, flagNum, roundStartSem, pawnMoveSem, flagQueue, indicationSem, broadcastQueue, scoreQueue;
 int rounds = 0, roundsTime = 0;
+struct timespec thold;
 env environment;
 table *sharedTable;
 pid_t *players;
@@ -119,7 +120,7 @@ void flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScore
         }
         flags[i].xPos = X;
         flags[i].yPos = Y;
-        gameTable->matrix[Y][X] = 'F';
+        gameTable->matrix[Y][X] = i + 49;
     }
 }
 
@@ -235,9 +236,11 @@ int main(int argc, char **argv) {
     playerScore = malloc(sizeof(int) * environment.SO_NUM_G);
     playerMoves = malloc(sizeof(int) * environment.SO_NUM_G);
     lastRoundPlayerMoves = malloc(sizeof(int) * environment.SO_NUM_G);
-    for (i = 0; i <environment.SO_NUM_G ; ++i) {
+    for (i = 0; i < environment.SO_NUM_G; ++i) {
         playerMoves[i] = playerScore[i] = lastRoundPlayerMoves[i] = 0;
     }
+    thold.tv_nsec = environment.SO_MIN_HOLD_NSEC;
+    thold.tv_sec = 0;
 
     /*creating a semaphore for starting round before the creation of the players, otherwise they may run before the master and
      * start the game before the master is ready*/

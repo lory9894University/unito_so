@@ -4,11 +4,9 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/msg.h>
 #include <strings.h>
-#include <sys/sem.h>
 #include <sys/shm.h>
 #include "shared_res.h"
 #include "player.h"
@@ -150,6 +148,7 @@ void objectives(flag *flags) {
                 secondBestFlag = j;
             }
         }
+        flagObjective[bestFlag] += 1;
         pawnArray[i].objectiveX = flags[bestFlag].xPos;
         pawnArray[i].objectiveY = flags[bestFlag].yPos;
         pawnArray[i].objectiveId = flags[bestFlag].id;
@@ -157,24 +156,32 @@ void objectives(flag *flags) {
         pawnArray[i].objective2Y = flags[secondBestFlag].yPos;
         pawnArray[i].objective2Id = flags[secondBestFlag].id;
     }
-    /* closest pawn to the flags not token
+    /* closest pawn to the flags not taken*/
+    /*modificabile, il vettore flag objective non conta più se è targettata, ma conta da quanti è targettata.
+     * quando cambio un terget prendo quello precedente e imposto il relativo valore a =-1.
+     * così posso essere certo che TUTTE le flag siano targettizzate*/
+    /*ciclo for che imposta a zero la variabile i quando viene cambiato il target di una pedina; l'unico modo che ha per
+     * concludersi e che TUTTE i flagObjective siano > 0 */
     distanceBest = 0;
     distanceLocal = 0;
     for (i = 0; i < flagNum; ++i) {
         if (flagObjective[i] == 0) {
             for (j = 0; j < pawnNumber; ++j) {
-                distanceLocal = abs(pawnArray[j].positionX - flags[i].xPos) + abs(pawnArray[j].positionY - flags[i].yPos);
+                distanceLocal =
+                        abs(pawnArray[j].positionX - flags[i].xPos) + abs(pawnArray[j].positionY - flags[i].yPos);
                 if ((distanceLocal < distanceBest || distanceBest == 0)) {
                     distanceBest = distanceLocal;
                     bestPawn = j;
                     flagObjective[i] = 1;
                 }
-                pawnArray[bestPawn].objectiveX = flags[i].xPos;
-                pawnArray[bestPawn].objectiveY = flags[i].yPos;
             }
+            pawnArray[bestPawn].objectiveX = flags[i].xPos;
+            pawnArray[bestPawn].objectiveY = flags[i].yPos;
+            flagObjective[pawnArray[bestPawn].objectiveId - 1] -= 1;
+            pawnArray[bestPawn].objectiveId = flags[i].id;
+            i = 0;
         }
     }
-    */
     for (i = 0; i < pawnNumber; ++i) {
         directives.mtype = pawnArray[i].pid;
         directives.newDirectives = pawnArray[i];
