@@ -15,7 +15,7 @@
 
 /*#define DEBUG*/
 
-extern int shmId;/*processes already have in their stack the id of the shared mem*/
+extern int shmId;
 extern table *sharedTable;
 extern int playerSem, roundStartSem, indicationSem;
 int msgPawn, pawnNumber;
@@ -157,11 +157,6 @@ void objectives(flag *flags) {
         pawnArray[i].objective2Id = flags[secondBestFlag].id;
     }
     /* closest pawn to the flags not taken*/
-    /*modificabile, il vettore flag objective non conta più se è targettata, ma conta da quanti è targettata.
-     * quando cambio un terget prendo quello precedente e imposto il relativo valore a =-1.
-     * così posso essere certo che TUTTE le flag siano targettizzate*/
-    /*ciclo for che imposta a zero la variabile i quando viene cambiato il target di una pedina; l'unico modo che ha per
-     * concludersi e che TUTTE i flagObjective siano > 0 */
     distanceBest = 0;
     distanceLocal = 0;
     for (i = 0; i < flagNum; ++i) {
@@ -185,14 +180,6 @@ void objectives(flag *flags) {
     for (i = 0; i < pawnNumber; ++i) {
         directives.mtype = pawnArray[i].pid;
         directives.newDirectives = pawnArray[i];
-        /* todo: scoprire perchè funziona
-        directives.newDirectives.objectiveX = pawnArray[i].objectiveX;
-        directives.newDirectives.objectiveY = pawnArray[i].objectiveY;
-        directives.newDirectives.objectiveId = pawnArray[i].objectiveId;
-        directives.newDirectives.objective2X = pawnArray[i].objective2X;
-        directives.newDirectives.objective2Y = pawnArray[i].objective2Y;
-        directives.newDirectives.objective2Id = pawnArray[i].objective2Id;
-         */
         msgsnd(msgPawn, &directives, sizeof(pawn), 0);
     }
     fprintf(stderr, "\n");
@@ -213,7 +200,6 @@ void playerLife(int moves) {
         score.movesUsed = 0;
         semandlingReturn = semHandling(indicationSem, 0, RESERVE);
         while (errno == EINTR && semandlingReturn == -1) {
-            /*fprintf(stderr, "deep shit player\n");*/
             semandlingReturn = semHandling(indicationSem, 0, RESERVE);
         }
         /*fprintf(stderr, "started indication\n");*/
