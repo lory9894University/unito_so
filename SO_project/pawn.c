@@ -5,19 +5,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <math.h>
-#include <sys/types.h>
 #include <sys/ipc.h>
-#include <sys/wait.h>
 #include <sys/shm.h>
-#include <sys/sem.h>
 #include <string.h>
 #include <sys/msg.h>
+#include <time.h>
 
 /*#define DEBUG*/
 
 extern int shmId, flagShm;
 extern int pawnMoveSem, msgPawn, flagQueue, broadcastQueue;
+struct timespec thold;
 table *sharedTable;
 flag *flags;
 pawnDirection directives;
@@ -77,7 +75,7 @@ void createPawn(int posX, int posY) {
     fprintf(stderr, "pid: %d , i'm a pawn. created by %d\n", getpid(), getppid());
     /*sleep(10); /*thanks debugger*/
 #endif
-
+    fprintf(stderr, "pid: %d , i'm a pawn. created by %d\n", getpid(), getppid());
     sharedTable = shmat(shmId, NULL, 0);
     TEST_ERROR;
     flags = shmat(flagShm, NULL, 0);
@@ -110,7 +108,7 @@ void moving() {
         if (directives.newDirectives.objectiveId == -1)
             break;
         if (yVect == 0 && xVect == 0) {
-            fprintf(stderr, "flag %d taken\n", directives.newDirectives.objectiveId);
+            /*fprintf(stderr, "flag %d taken\n", directives.newDirectives.objectiveId);*/
             message.id = directives.newDirectives.objectiveId;
             message.playerPid = getppid();
             message.mtype = message.id;
@@ -127,13 +125,15 @@ void moving() {
                                 directives.newDirectives.positionX - 1, RESERVE);
                     semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
                                 directives.newDirectives.positionX, RELEASE);
+                    nanosleep(&thold, NULL);
                     directives.newDirectives.positionX--;
                 } else if (xVect > 0) {
                     semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
                             directives.newDirectives.positionX + 1, RESERVE);
-                semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
-                            directives.newDirectives.positionX, RELEASE);
-                directives.newDirectives.positionX++;
+                    semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
+                                directives.newDirectives.positionX, RELEASE);
+                    nanosleep(&thold, NULL);
+                    directives.newDirectives.positionX++;
             }
         } else {
             /*move on Y Axis*/
@@ -142,12 +142,14 @@ void moving() {
                             directives.newDirectives.positionX, RESERVE);
                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
                             directives.newDirectives.positionX, RELEASE);
+                nanosleep(&thold, NULL);
                 directives.newDirectives.positionY--;
             } else if (yVect > 0) {
                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY + 1],
                             directives.newDirectives.positionX, RESERVE);
                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
                             directives.newDirectives.positionX, RELEASE);
+                nanosleep(&thold, NULL);
                 directives.newDirectives.positionY++;
             }
             }
@@ -176,7 +178,7 @@ void pawnLife() {
             msgReturn = msgrcv(msgPawn, &directives, sizeof(pawn), getpid(), 0);
         }
         debugReturnSemop = semHandling(pawnMoveSem, 0, 0);
-        while (errno == EINTR) {
+        while (errno == EINTR && debugReturnSemop == -1) {
             debugReturnSemop = semHandling(pawnMoveSem, 0, 0);
         } /*wait for master to start the round*/
         if (debugReturnSemop) {
