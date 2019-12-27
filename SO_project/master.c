@@ -16,14 +16,17 @@
 #include "pawn.h"
 /*#define DEBUG*/
 
+/*IPCs*/
 int shmId, playerSem, flagShm, flagNum, roundStartSem, pawnMoveSem, flagQueue, indicationSem, broadcastQueue, scoreQueue;
-int rounds = 0, roundsTime = 0;
 struct timespec thold;
+/*game environment*/
 env environment;
 table *sharedTable;
 pid_t *players;
 flag *flags;
+/*score*/
 int *playerScore, *playerMoves, *lastRoundPlayerMoves;
+int rounds = 0, roundsTime = 0;
 
 
 table *tableCreation(int base, int height) {
@@ -59,9 +62,7 @@ table *tableCreation(int base, int height) {
     return myTable;
 }
 
-void printState(
-        table myTable,
-        int end) { /*TODO:chiedere al prof come faccio a far entrare una tabella di 120 colonne in uno schermo da 15 pollici */
+void printState(table myTable, int end) {
     int i, j, k;
     int movesLeft;
 
@@ -100,7 +101,6 @@ void flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScore
     srand(getpid());
     flagNotValued = flagNum = ((rand() % (maxFlag - (minFlag - 1))) + minFlag);
 
-    /*i giocatori devono sapere il valore della bandiera?*/
     for (i = 0; i < flagNum; ++i) {
         /*flag value randomly assigned*/
         flags[i].value = (rand() % (roundScore - flagNotValued--) + 1);
@@ -210,7 +210,6 @@ void alarmHandler() {
 
     exit(0);
 }
-
 
 int main(int argc, char **argv) {
     struct sigaction sa;

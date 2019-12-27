@@ -38,7 +38,6 @@ void pawnHandler(int signum) {
     exit(0);
 }
 
-
 void tookMyFlag() {
     int reachable;
     reachable = (directives.newDirectives.objective2X + directives.newDirectives.objective2Y) <=
@@ -87,13 +86,13 @@ void moving() {
     int yVect, xVect;
     msgFlag message;
     int handlingReturn;
-    /*attendi sulla coda flagQueue con IPC_NOWAIT e MSG_COPY e msgtype = directives.new.id, nel mentre esegui i tuoi spostamenti*/
     directives.newDirectives.movesUsed = 0;
     while (directives.newDirectives.movesLeft > 0) {
 #ifdef DEBUG
         sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = ' ';
         printf("%d ", directives.newDirectives.movesLeft);
 #endif
+        /*wait on flagQueue with IPC_NOWAIT, MSG_COPY and msgtype = directives.new.id, while you move*/
         msgrcv(broadcastQueue, &message, sizeof(int) * 2, directives.newDirectives.objectiveId, IPC_NOWAIT | MSG_COPY);
         if (errno != ENOMSG) {
             tookMyFlag();
@@ -282,8 +281,6 @@ void moving() {
             directives.newDirectives.movesUsed++;
 
         }
-        /*quando prendi una flag invia un messaggio specificando quale bandiera è stata presa sulla coda "flagQueque" con msgtype = flag.id
-         * ATTENZIONE ricordati di impostare il campo playerPid nel messaggio, al master serve*/
 #ifdef DEBUG
         sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = 'T';
 #endif
@@ -316,7 +313,7 @@ void pawnLife() {
 #endif
         sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = ' ';
         moving();
-        /*quando hai finito le mosse, oppure se ricevi il segnale di fine turno invia la tua posizione e le mosse residue al player*/
+        /*when pawn finished moving or when end round signal received pawn sends his coordinates to player*/
         directives.mtype = 1;
         msgsnd(msgPawn, &directives, sizeof(pawn), 0);
     }
