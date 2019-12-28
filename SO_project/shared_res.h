@@ -28,8 +28,27 @@ typedef struct {
     int playerPid;
 } msgScore;
 
+/*semaphore Operations*/
 /*semOp, 1 release, -1 reserve*/
 int semHandling(int semId, int semNum, int semOp);
 
 int semHandlingTimed(int semId, int semNum, int semOp);
+
+/*list operation*/
+typedef struct node *syncNode;
+struct node {
+    int distance;
+    int semIndex;
+
+    syncNode next;
+};
+
+syncNode newNode(syncNode next);
+
+void freeList(syncNode head);
+
+void insertList(syncNode *head, int distance, int semIndex);
+
+void changePriorityList(syncNode *head, int newDistance); /*only the head node will be changed*/
+
 #endif /*SO_PROJECT_SHARED_RES_H*/

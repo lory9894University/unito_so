@@ -8,6 +8,7 @@
 #include <sys/msg.h>
 #include <strings.h>
 #include <sys/shm.h>
+#include <sys/sem.h>
 #include "shared_res.h"
 #include "player.h"
 #include "error_handling.h"
@@ -18,8 +19,9 @@
 extern int shmId;
 extern table *sharedTable;
 extern int playerSem, roundStartSem, indicationSem;
-int msgPawn, pawnNumber;
+int msgPawn, pawnNumber, syncSem;
 pawn *pawnArray;
+syncNode syncList;
 
 void playerHandler(int signum) {
     int i;
@@ -79,13 +81,14 @@ pawn *playerBirth(int pawnNum, int numPlayer, int playersTot, int pawnSem, int m
     sharedTable = shmat(shmId, NULL, 0);
     /*TODO: questo costrutto è veramente necessario? il puntatore a sharedTable è già nell'heap*/
     TEST_ERROR;
-
+    syncSem = semget(IPC_PRIVATE, pawnNumber, 0600);
     msgPawn = msgget(IPC_PRIVATE, IPC_CREAT | 0600);
-    TEST_ERROR;
+
     /*pawn creation*/
     pawnArray = malloc(sizeof(pawn) * pawnNumber);
     srand(getpid());
     for (i = 0; i < pawnNumber && forkValue != 0; ++i) {
+        semctl(syncSem, i, SETVAL, 1);
         semHandling(playerSem, numPlayer, RESERVE);
         TEST_ERROR
         positionOccupied = 1;
@@ -181,6 +184,8 @@ void objectives(flag *flags) {
         directives.mtype = pawnArray[i].pid;
         directives.newDirectives = pawnArray[i];
         msgsnd(msgPawn, &directives, sizeof(pawn), 0);
+        insertList(&syncList, abs(directives.newDirectives.positionX - directives.newDirectives.objectiveX)
+                              + abs(directives.newDirectives.positionY - directives.newDirectives.objectiveY), i);
     }
     fprintf(stderr, "\n");
 }
