@@ -10,11 +10,11 @@ typedef struct {
     int objective2X, objective2Y, objective2Id;
     int movesLeft, movesUsed;
     pid_t pid;
-
+    int syncSemIndex;
 } pawn;
 
 typedef struct {
-    long mtype;             /* message type */
+    long mtype;
     pawn newDirectives;
 } pawnDirection;
 
