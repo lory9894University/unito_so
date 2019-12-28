@@ -28,6 +28,12 @@ typedef struct {
     int playerPid;
 } msgScore;
 
+typedef struct {
+    long msgType; /*1 stuck, 2 tookMyFlag*/
+    int semIndex;
+    int pawnPid, posX, posY;
+} msgSync;
+
 /*semaphore Operations*/
 /*semOp, 1 release, -1 reserve*/
 int semHandling(int semId, int semNum, int semOp);
