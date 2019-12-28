@@ -19,9 +19,10 @@
 extern int shmId;
 extern table *sharedTable;
 extern int playerSem, roundStartSem, indicationSem;
-int msgPawn, pawnNumber, syncSem;
+int msgPawn, pawnNumber, syncSem, syncQueue;
 pawn *pawnArray;
 syncNode syncList;
+
 
 void playerHandler(int signum) {
     int i;
@@ -70,7 +71,6 @@ pawn *playerBirth(int pawnNum, int numPlayer, int playersTot, int pawnSem, int m
 
     bzero(&sf, sizeof(sf));
     sf.sa_handler = endRound;
-    sf.sa_flags = SA_RESTART;
     sigaction(SIGUSR2, &sf, NULL);
 
 #ifdef DEBUG
@@ -83,6 +83,7 @@ pawn *playerBirth(int pawnNum, int numPlayer, int playersTot, int pawnSem, int m
     TEST_ERROR;
     syncSem = semget(IPC_PRIVATE, pawnNumber, 0600);
     msgPawn = msgget(IPC_PRIVATE, IPC_CREAT | 0600);
+    syncQueue = msgget(IPC_PRIVATE, IPC_CREAT | 0600);
 
     /*pawn creation*/
     pawnArray = malloc(sizeof(pawn) * pawnNumber);
@@ -197,7 +198,7 @@ void playerLife(int moves) {
     pawnDirection direction;
     int semandlingReturn;
     msgScore score;
-
+    msgSync syncMessage;
 
     flags = shmat(flagShm, NULL, 0);
     /*sleep(10);*/
@@ -213,6 +214,22 @@ void playerLife(int moves) {
 #ifdef DEBUG
         printf("master can start\n");
 #endif
+
+        semctl(syncSem, syncList->semIndex, SETVAL, 0);
+        while (msgrcv(syncQueue, &syncMessage, sizeof(int) * 4, 0, 0) != -1) {
+            semctl(syncSem, syncList->semIndex, SETVAL, 1);
+            i = 0;
+            while (syncMessage.pawnPid == pawnArray[i].pid)
+                i++;
+            if (syncMessage.msgType == 2) //took the flag
+                changePriorityList(&syncList, abs(syncMessage.posX - pawnArray[i].objective2X) +
+                                              abs(syncMessage.posY - pawnArray[i].objective2Y));
+            else
+                changePriorityList(&syncList,
+                                   -1);/*-1 to signal that the priority is the lowest and it needs to go to the end of the list*/
+            semctl(syncSem, syncList->semIndex, SETVAL, 0);
+        }
+        semctl(syncSem, syncList->semIndex, SETVAL, 1);
         for (i = 0; i < pawnNumber; ++i) {
             msgrcv(msgPawn, &direction, sizeof(pawn), 1, 0);
             for (j = 0; j < pawnNumber; ++j) {

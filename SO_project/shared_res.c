@@ -78,9 +78,16 @@ void changePriorityList(syncNode *head, int newDistance) {
     *head = (*head)->next;
     p = (*head)->next;
     x = *head;
-    while (p != NULL && (p->distance > newDistance)) {
-        x = p;
-        p = p->next;
+    if (newDistance >= 0) {
+        while (p != NULL && (p->distance > newDistance)) {
+            x = p;
+            p = p->next;
+        }
+    } else {
+        while (p != NULL) {
+            x = p;
+            p = p->next;
+        }
     }
     x->next = moved;
     moved->next = p;

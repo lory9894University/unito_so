@@ -14,7 +14,7 @@
 /*#define DEBUG*/
 
 extern int shmId, flagShm;
-extern int pawnMoveSem, msgPawn, flagQueue, broadcastQueue;
+extern int pawnMoveSem, msgPawn, flagQueue, broadcastQueue, syncQueue;
 struct timespec thold;
 table *sharedTable;
 flag *flags;
@@ -40,16 +40,32 @@ void pawnHandler(int signum) {
 
 void tookMyFlag() {
     int reachable;
+    msgSync syncMessage;
+
     reachable = (directives.newDirectives.objective2X + directives.newDirectives.objective2Y) <=
                 directives.newDirectives.movesLeft;
     if (directives.newDirectives.objectiveId != directives.newDirectives.objective2Id && reachable) {
         directives.newDirectives.objectiveId = directives.newDirectives.objective2Id;
         directives.newDirectives.objectiveX = directives.newDirectives.objective2X;
         directives.newDirectives.objectiveY = directives.newDirectives.objective2Y;
+
+        syncMessage.semIndex = directives.newDirectives.syncSemIndex;
+        syncMessage.posX = directives.newDirectives.positionX;
+        syncMessage.posY = directives.newDirectives.positionY;
+        syncMessage.pawnPid = getpid();
+        syncMessage.msgType = 2;
+        msgsnd(syncQueue, &syncMessage, sizeof(int) * 4, 0);
     } else {
         directives.newDirectives.objectiveId = -1;
         directives.newDirectives.objectiveX = -1;
         directives.newDirectives.objectiveY = -1;
+
+        syncMessage.semIndex = directives.newDirectives.syncSemIndex;
+        syncMessage.posX = directives.newDirectives.positionX;
+        syncMessage.posY = directives.newDirectives.positionY;
+        syncMessage.pawnPid = getpid();
+        syncMessage.msgType = 1;
+        msgsnd(syncQueue, &syncMessage, sizeof(int) * 4, 0);
     }
 }
 
@@ -86,12 +102,16 @@ void moving() {
     int yVect, xVect;
     msgFlag message;
     int handlingReturn;
+    extern int syncSem;
+    msgSync syncMessage;
+
     directives.newDirectives.movesUsed = 0;
     while (directives.newDirectives.movesLeft > 0) {
 #ifdef DEBUG
         sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = ' ';
         printf("%d ", directives.newDirectives.movesLeft);
 #endif
+        semHandling(syncQueue, directives.newDirectives.syncSemIndex, 0);
         /*wait on flagQueue with IPC_NOWAIT, MSG_COPY and msgtype = directives.new.id, while you move*/
         msgrcv(broadcastQueue, &message, sizeof(int) * 2, directives.newDirectives.objectiveId, IPC_NOWAIT | MSG_COPY);
         if (errno != ENOMSG) {
@@ -130,7 +150,12 @@ void moving() {
                                     sharedTable->semMatrix[directives.newDirectives.positionY - 1],
                                     directives.newDirectives.positionX, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
-                                /*send message stuck*/
+                                syncMessage.semIndex = directives.newDirectives.syncSemIndex;
+                                syncMessage.posX = directives.newDirectives.positionX;
+                                syncMessage.posY = directives.newDirectives.positionY;
+                                syncMessage.pawnPid = getpid();
+                                syncMessage.msgType = 1;
+                                msgsnd(syncQueue, &syncMessage, sizeof(int) * 4, 0);
                                 directives.newDirectives.movesLeft++;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
@@ -143,7 +168,12 @@ void moving() {
                                     sharedTable->semMatrix[directives.newDirectives.positionY + 1],
                                     directives.newDirectives.positionX, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
-                                /*send message stuck*/
+                                syncMessage.semIndex = directives.newDirectives.syncSemIndex;
+                                syncMessage.posX = directives.newDirectives.positionX;
+                                syncMessage.posY = directives.newDirectives.positionY;
+                                syncMessage.pawnPid = getpid();
+                                syncMessage.msgType = 1;
+                                msgsnd(syncQueue, &syncMessage, sizeof(int) * 4, 0);
                                 directives.newDirectives.movesLeft++;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
@@ -168,7 +198,12 @@ void moving() {
                                     sharedTable->semMatrix[directives.newDirectives.positionY - 1],
                                     directives.newDirectives.positionX, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
-                                /*send message stuck*/
+                                syncMessage.semIndex = directives.newDirectives.syncSemIndex;
+                                syncMessage.posX = directives.newDirectives.positionX;
+                                syncMessage.posY = directives.newDirectives.positionY;
+                                syncMessage.pawnPid = getpid();
+                                syncMessage.msgType = 1;
+                                msgsnd(syncQueue, &syncMessage, sizeof(int) * 4, 0);
                                 directives.newDirectives.movesLeft++;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
@@ -181,7 +216,12 @@ void moving() {
                                     sharedTable->semMatrix[directives.newDirectives.positionY + 1],
                                     directives.newDirectives.positionX, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
-                                /*send message stuck*/
+                                syncMessage.semIndex = directives.newDirectives.syncSemIndex;
+                                syncMessage.posX = directives.newDirectives.positionX;
+                                syncMessage.posY = directives.newDirectives.positionY;
+                                syncMessage.pawnPid = getpid();
+                                syncMessage.msgType = 1;
+                                msgsnd(syncQueue, &syncMessage, sizeof(int) * 4, 0);
                                 directives.newDirectives.movesLeft++;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
@@ -209,7 +249,12 @@ void moving() {
                                     sharedTable->semMatrix[directives.newDirectives.positionY],
                                     directives.newDirectives.positionX - 1, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
-                                /*send message stuck*/
+                                syncMessage.semIndex = directives.newDirectives.syncSemIndex;
+                                syncMessage.posX = directives.newDirectives.positionX;
+                                syncMessage.posY = directives.newDirectives.positionY;
+                                syncMessage.pawnPid = getpid();
+                                syncMessage.msgType = 1;
+                                msgsnd(syncQueue, &syncMessage, sizeof(int) * 4, 0);
                                 directives.newDirectives.movesLeft++;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
@@ -222,7 +267,12 @@ void moving() {
                                     sharedTable->semMatrix[directives.newDirectives.positionY],
                                     directives.newDirectives.positionX + 1, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
-                                /*todo:send message stuck*/
+                                syncMessage.semIndex = directives.newDirectives.syncSemIndex;
+                                syncMessage.posX = directives.newDirectives.positionX;
+                                syncMessage.posY = directives.newDirectives.positionY;
+                                syncMessage.pawnPid = getpid();
+                                syncMessage.msgType = 1;
+                                msgsnd(syncQueue, &syncMessage, sizeof(int) * 4, 0);
                                 directives.newDirectives.movesLeft++;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
@@ -247,7 +297,12 @@ void moving() {
                                     sharedTable->semMatrix[directives.newDirectives.positionY],
                                     directives.newDirectives.positionX - 1, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
-                                /*send message stuck*/
+                                syncMessage.semIndex = directives.newDirectives.syncSemIndex;
+                                syncMessage.posX = directives.newDirectives.positionX;
+                                syncMessage.posY = directives.newDirectives.positionY;
+                                syncMessage.pawnPid = getpid();
+                                syncMessage.msgType = 1;
+                                msgsnd(syncQueue, &syncMessage, sizeof(int) * 4, 0);
                                 directives.newDirectives.movesLeft++;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
@@ -260,7 +315,12 @@ void moving() {
                                     sharedTable->semMatrix[directives.newDirectives.positionY],
                                     directives.newDirectives.positionX + 1, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
-                                /*todo:send message stuck*/
+                                syncMessage.semIndex = directives.newDirectives.syncSemIndex;
+                                syncMessage.posX = directives.newDirectives.positionX;
+                                syncMessage.posY = directives.newDirectives.positionY;
+                                syncMessage.pawnPid = getpid();
+                                syncMessage.msgType = 1;
+                                msgsnd(syncQueue, &syncMessage, sizeof(int) * 4, 0);
                                 directives.newDirectives.movesLeft++;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
