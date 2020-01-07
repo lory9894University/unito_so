@@ -111,7 +111,7 @@ void moving() {
         sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = ' ';
         printf("%d ", directives.newDirectives.movesLeft);
 #endif
-        semHandling(syncQueue, directives.newDirectives.syncSemIndex, 0);
+        semHandling(syncSem, directives.newDirectives.syncSemIndex, 0);
         /*wait on flagQueue with IPC_NOWAIT, MSG_COPY and msgtype = directives.new.id, while you move*/
         msgrcv(broadcastQueue, &message, sizeof(int) * 2, directives.newDirectives.objectiveId, IPC_NOWAIT | MSG_COPY);
         if (errno != ENOMSG) {
@@ -345,7 +345,12 @@ void moving() {
         sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = 'T';
 #endif
     }
-
+    syncMessage.semIndex = directives.newDirectives.syncSemIndex;
+    syncMessage.posX = directives.newDirectives.positionX;
+    syncMessage.posY = directives.newDirectives.positionY;
+    syncMessage.pawnPid = getpid();
+    syncMessage.msgType = 1;
+    msgsnd(syncQueue, &syncMessage, sizeof(int) * 4, 0);
 }
 
 void pawnLife() {
