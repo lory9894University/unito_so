@@ -182,6 +182,7 @@ void objectives(flag *flags) {
         }
     }
     for (i = 0; i < pawnNumber; ++i) {
+        pawnArray[i].syncSemIndex = i;
         directives.mtype = pawnArray[i].pid;
         directives.newDirectives = pawnArray[i];
         msgsnd(msgPawn, &directives, sizeof(pawn), 0);
