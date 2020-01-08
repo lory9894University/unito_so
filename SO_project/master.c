@@ -266,7 +266,7 @@ int main(int argc, char **argv) {
         /*waiting for the plgayers*/
         semHandling(roundStartSem, 0, 0);
         rounds++;
-        alarm(3);
+        alarm(environment.SO_MAX_TIME);
         semHandling(pawnMoveSem, 0, -1); /*round started*/
         for (i = 0; i < flagNum; ++i) {
             msgrcv(flagQueue, &message, sizeof(int) * 2, 0, 0);
