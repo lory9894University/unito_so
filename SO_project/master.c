@@ -280,7 +280,7 @@ int main(int argc, char **argv) {
         alarm(environment.SO_MAX_TIME);
         semHandling(pawnMoveSem, 0, -1); /*round started*/
         for (i = 0; i < flagNum; ++i) {
-            msgrcv(flagQueue, &message, sizeof(int) * 2, 0, 0);
+            msgrcv(flagQueue, &message, sizeof(int) * 2, 0, 0);/*TODO: barare o non barare, è questo il dilemma*/
             fprintf(stderr, "flag %d received\n", message.id);
             /*il master deve ritrasmettere a tutti sun una coda separata i messaggi ricevuti da questa
              * messaggi da leggere con il flag MSG_COPY*/
@@ -295,12 +295,10 @@ int main(int argc, char **argv) {
         printf("all flags taken\n");
         roundsTime = alarm(0);
         semctl(pawnMoveSem, 0, SETVAL, 1);
+        /*empty tye flagQue*/
+        while (msgrcv(flagQueue, &message, sizeof(int) * 2, 0, IPC_NOWAIT) != -1);
         /*empty the broadcast queue*/
-        i = 0;
-        while (msgrcv(broadcastQueue, &message, sizeof(int) * 2, 0, IPC_NOWAIT) != -1) {
-            i++;
-        };
-        printf("%d", i);
+        while (msgrcv(broadcastQueue, &message, sizeof(int) * 2, 0, IPC_NOWAIT) != -1);
         for (i = 0; i < environment.SO_NUM_G; ++i) {
             kill(players[i], SIGUSR2);
         }
@@ -313,9 +311,6 @@ int main(int argc, char **argv) {
             }
         }
         printState(*sharedTable, 0);
-        /* tu rimani in attesa di messaggi(aka le flag prese)
-         * quando tutte le flag sono state prese, riavvia il ciclo, superati i SO_MAX_TIME secondi parte l'handler
-         * */
         flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX,
                          environment.SO_ROUND_SCORE);
         semctl(roundStartSem, 0, SETVAL, environment.SO_NUM_G);
