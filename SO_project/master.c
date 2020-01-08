@@ -284,9 +284,14 @@ int main(int argc, char **argv) {
         printf("all flags taken\n");
         roundsTime = alarm(0);
         semctl(pawnMoveSem, 0, SETVAL, 1);
+        /*empty the broadcast queue*/
+        while(msgrcv(broadcastQueue,&message,sizeof(int)*2,0,IPC_NOWAIT) != -1);
+        printf("here\n");
+
         for (i = 0; i < environment.SO_NUM_G; ++i) {
             kill(players[i], SIGUSR2);
         }
+        printf("here\n");
         for (i = 0; i < environment.SO_NUM_G; ++i) {
             msgrcv(scoreQueue, &score, sizeof(int), 0, 0);
             for (j = 0; j < environment.SO_NUM_G; ++j) {

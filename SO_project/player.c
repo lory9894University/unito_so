@@ -108,6 +108,7 @@ pawn *playerBirth(int pawnNum, int numPlayer, int playersTot, int pawnSem, int m
             pawnArray[i].objective2X = -1;
             pawnArray[i].objective2Y = -1;
             pawnArray[i].movesLeft = moves;
+            pawnArray[i].stop = 0;
         }
         semHandling(playerSem, numPlayer == playersTot - 1 ? 0 : numPlayer + 1, RELEASE);
         TEST_ERROR
