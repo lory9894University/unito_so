@@ -42,7 +42,7 @@ void tookMyFlag() {
     int reachable;
     reachable = (directives.newDirectives.objective2X + directives.newDirectives.objective2Y) <=
                 directives.newDirectives.movesLeft;
-    if (directives.newDirectives.objectiveId != directives.newDirectives.objective2Id && reachable) {
+    if (directives.newDirectives.objectiveId != directives.newDirectives.objective2Id && reachable && directives.newDirectives.objectiveId != -1) {
         directives.newDirectives.objectiveId = directives.newDirectives.objective2Id;
         directives.newDirectives.objectiveX = directives.newDirectives.objective2X;
         directives.newDirectives.objectiveY = directives.newDirectives.objective2Y;
@@ -54,7 +54,6 @@ void tookMyFlag() {
 }
 
 void roundEnded(int signum) {
-    directives.newDirectives.movesLeft = 0;
     sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = 'T';
 }
 
@@ -87,11 +86,11 @@ void moving() {
     msgFlag message;
     int handlingReturn;
     directives.newDirectives.movesUsed = 0;
-    while (directives.newDirectives.movesLeft > 0) {
-#ifdef DEBUG
+    while (directives.newDirectives.movesLeft > 0 && directives.newDirectives.stop==0) {
+        #ifdef DEBUG
         sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = ' ';
         printf("%d ", directives.newDirectives.movesLeft);
-#endif
+        #endif
         /*wait on flagQueue with IPC_NOWAIT, MSG_COPY and msgtype = directives.new.id, while you move*/
         msgrcv(broadcastQueue, &message, sizeof(int) * 2, directives.newDirectives.objectiveId, IPC_NOWAIT | MSG_COPY);
         if (errno != ENOMSG) {
@@ -130,7 +129,6 @@ void moving() {
                                     sharedTable->semMatrix[directives.newDirectives.positionY - 1],
                                     directives.newDirectives.positionX, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
-                                /*send message stuck*/
                                 directives.newDirectives.movesLeft++;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
@@ -143,7 +141,6 @@ void moving() {
                                     sharedTable->semMatrix[directives.newDirectives.positionY + 1],
                                     directives.newDirectives.positionX, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
-                                /*send message stuck*/
                                 directives.newDirectives.movesLeft++;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
@@ -168,7 +165,6 @@ void moving() {
                                     sharedTable->semMatrix[directives.newDirectives.positionY - 1],
                                     directives.newDirectives.positionX, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
-                                /*send message stuck*/
                                 directives.newDirectives.movesLeft++;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
@@ -181,7 +177,6 @@ void moving() {
                                     sharedTable->semMatrix[directives.newDirectives.positionY + 1],
                                     directives.newDirectives.positionX, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
-                                /*send message stuck*/
                                 directives.newDirectives.movesLeft++;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
@@ -314,6 +309,10 @@ void pawnLife() {
         sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = ' ';
         moving();
         /*when pawn finished moving or when end round signal received pawn sends his coordinates to player*/
+#ifdef DEBUG
+        if (directives.newDirectives.movesLeft==0)
+            fprintf(stderr, "finito le mosse\n");
+#endif
         directives.mtype = 1;
         msgsnd(msgPawn, &directives, sizeof(pawn), 0);
     }
