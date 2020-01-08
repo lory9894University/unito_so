@@ -54,6 +54,7 @@ void tookMyFlag() {
 }
 
 void roundEnded(int signum) {
+    directives.newDirectives.stop = 1;
     sharedTable->matrix[directives.newDirectives.positionY][directives.newDirectives.positionX] = 'T';
 }
 

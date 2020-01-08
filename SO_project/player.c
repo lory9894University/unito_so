@@ -122,6 +122,7 @@ void objectives(flag *flags) {
     int i, j;
     int bestFlag = -1, secondBestFlag = -1, bestPawn = -1, distanceBest, distanceLocal = 0;
     int *flagObjective;
+    int loop = 0;
     extern int flagNum;
     pawnDirection directives;
 
@@ -160,7 +161,7 @@ void objectives(flag *flags) {
     /* closest pawn to the flags not taken*/
     distanceBest = 0;
     distanceLocal = 0;
-    for (i = 0; i < flagNum; ++i) {
+    for (i = 0; i < flagNum && loop < 100; ++i, ++loop) {
         if (flagObjective[i] == 0) {
             for (j = 0; j < pawnNumber; ++j) {
                 distanceLocal =
@@ -196,7 +197,6 @@ void playerLife(int moves) {
 
 
     flags = shmat(flagShm, NULL, 0);
-    /*sleep(10);*/
     while (1) {
         score.movesUsed = 0;
         semandlingReturn = semHandling(indicationSem, 0, RESERVE);
