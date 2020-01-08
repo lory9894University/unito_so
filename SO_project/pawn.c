@@ -108,7 +108,6 @@ void moving() {
         if (directives.newDirectives.objectiveId == -1)
             break;
         if (yVect == 0 && xVect == 0) {
-            /*fprintf(stderr, "flag %d taken\n", directives.newDirectives.objectiveId);*/
             message.id = directives.newDirectives.objectiveId;
             message.playerPid = getppid();
             message.mtype = message.id;
