@@ -1,7 +1,7 @@
 CFLAGS = -std=c89 -Wpedantic
 TARGET = SO_project
 
-OBJ    = error_handling.h pawn.o master.o player.o shared_res.o env_operation.h
+OBJ    = error_handling.h pawn.o master.o player.o shared_res.o env_operation.o
 
 
 $(TARGET): $(OBJ)
