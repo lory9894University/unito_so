@@ -124,6 +124,18 @@ void flagsPositioning(table *gameTable, int minFlag, int maxFlag, int roundScore
     }
 }
 
+void fieldInit(table myTable) {
+    int i, j;
+
+    for (i = 0; i < myTable.height; ++i) {
+        for (j = 0; j < myTable.base; ++j) {
+            myTable.matrix[i][j] = ' ';
+        }
+    }
+
+}
+
+
 void playersCreation(int numPlayers, int numPawn) {
     int i = 0, forkVal = -1;
     int placePawnSem;
@@ -262,7 +274,6 @@ int main(int argc, char **argv) {
         /*sleep(10);*/
         semctl(indicationSem, 0, SETVAL, environment.SO_NUM_G);
         debug++;
-        TEST_ERROR
         /*waiting for the plgayers*/
         semHandling(roundStartSem, 0, 0);
         rounds++;
@@ -285,13 +296,14 @@ int main(int argc, char **argv) {
         roundsTime = alarm(0);
         semctl(pawnMoveSem, 0, SETVAL, 1);
         /*empty the broadcast queue*/
-        while(msgrcv(broadcastQueue,&message,sizeof(int)*2,0,IPC_NOWAIT) != -1);
-        printf("here\n");
-
+        i = 0;
+        while (msgrcv(broadcastQueue, &message, sizeof(int) * 2, 0, IPC_NOWAIT) != -1) {
+            i++;
+        };
+        printf("%d", i);
         for (i = 0; i < environment.SO_NUM_G; ++i) {
             kill(players[i], SIGUSR2);
         }
-        printf("here\n");
         for (i = 0; i < environment.SO_NUM_G; ++i) {
             msgrcv(scoreQueue, &score, sizeof(int), 0, 0);
             for (j = 0; j < environment.SO_NUM_G; ++j) {
@@ -307,6 +319,7 @@ int main(int argc, char **argv) {
         flagsPositioning(sharedTable, environment.SO_FLAG_MIN, environment.SO_FLAG_MAX,
                          environment.SO_ROUND_SCORE);
         semctl(roundStartSem, 0, SETVAL, environment.SO_NUM_G);
+        fieldInit(*sharedTable);
     }
     return 0;
 }
