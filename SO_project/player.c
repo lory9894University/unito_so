@@ -198,7 +198,9 @@ void playerLife(int moves) {
         while (errno == EINTR && semandlingReturn == -1) {
             semandlingReturn = semHandling(indicationSem, 0, RESERVE);
         }
+#ifdef DEBUG
         /*fprintf(stderr, "started indication\n");*/
+#endif
         objectives(flags);
         semHandling(roundStartSem, 0, -1);
 #ifdef DEBUG
@@ -213,7 +215,6 @@ void playerLife(int moves) {
                     pawnArray[i].movesLeft = direction.newDirectives.movesLeft;
                     pawnArray[i].movesUsed = direction.newDirectives.movesUsed;
                     score.movesUsed += direction.newDirectives.movesUsed;
-                    /*printf("%d\n", direction.newDirectives.movesLeft);*/
                 }
             }
         }

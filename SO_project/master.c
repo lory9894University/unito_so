@@ -188,6 +188,7 @@ void clean() {
     }
     msgctl(flagQueue, IPC_RMID, NULL);
     msgctl(broadcastQueue, IPC_RMID, NULL);
+    msgctl(scoreQueue, IPC_RMID, NULL);
     shmctl(shmId, IPC_RMID, NULL);
     shmctl(flagShm, IPC_RMID, NULL);
     shmdt(flags);
@@ -225,7 +226,6 @@ void alarmHandler() {
 
 int main(int argc, char **argv) {
     struct sigaction sa;
-    int debug = 0;
     int i, j;
     msgFlag message;
     msgScore score;
@@ -270,9 +270,8 @@ int main(int argc, char **argv) {
          * no need to set it before creation because of the wait on msg queue*/
         semctl(pawnMoveSem, 0, SETVAL, 1);
         /*semaphore to start the indication phase*/
-        /*sleep(10);*/
         semctl(indicationSem, 0, SETVAL, environment.SO_NUM_G);
-        /*waiting for the plaayers*/
+        /*waiting for the players*/
         semHandling(roundStartSem, 0, 0);
         rounds++;
         alarm(environment.SO_MAX_TIME);
@@ -282,10 +281,8 @@ int main(int argc, char **argv) {
 #ifdef DEBUG
             fprintf(stderr, "flag %d received\n", message.id);
 #endif
-            /*il master deve ritrasmettere a tutti sun una coda separata i messaggi ricevuti da questa
-             * messaggi da leggere con il flag MSG_COPY*/
             msgsnd(broadcastQueue, &message, sizeof(int) * 2, 0);
-            /*fai i tuoi inutili calcoli sui punteggi */
+            /*score counting */
             for (j = 0; j < environment.SO_NUM_G; ++j) {
                 if (players[j] == message.playerPid) {
                     playerScore[j] += flags[message.id - 1].value;
@@ -315,5 +312,4 @@ int main(int argc, char **argv) {
         semctl(roundStartSem, 0, SETVAL, environment.SO_NUM_G);
         fieldInit(*sharedTable);
     }
-    return 0;
 }
