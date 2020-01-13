@@ -77,17 +77,13 @@ pawn *playerBirth(int pawnNum, int numPlayer, int playersTot, int pawnSem, int m
     /*printf("%d ", shmId);*/
 #endif
     sharedTable = shmat(shmId, NULL, 0);
-    /*TODO: questo costrutto è veramente necessario? il puntatore a sharedTable è già nell'heap*/
-    TEST_ERROR;
 
     msgPawn = msgget(IPC_PRIVATE, IPC_CREAT | 0600);
-    TEST_ERROR;
     /*pawn creation*/
     pawnArray = malloc(sizeof(pawn) * pawnNumber);
     srand(getpid());
     for (i = 0; i < pawnNumber && forkValue != 0; ++i) {
         semHandling(playerSem, numPlayer, RESERVE);
-        TEST_ERROR
         positionOccupied = 1;
         while (positionOccupied) {
             posX = rand() % sharedTable->base;
@@ -111,7 +107,6 @@ pawn *playerBirth(int pawnNum, int numPlayer, int playersTot, int pawnSem, int m
             pawnArray[i].stop = 0;
         }
         semHandling(playerSem, numPlayer == playersTot - 1 ? 0 : numPlayer + 1, RELEASE);
-        TEST_ERROR
     }
 
     semHandling(pawnSem, 0, RESERVE);
@@ -215,7 +210,6 @@ void playerLife(int moves) {
                 if (direction.newDirectives.pid == pawnArray[j].pid) {
                     pawnArray[i].positionX = direction.newDirectives.positionX;
                     pawnArray[i].positionY = direction.newDirectives.positionY;
-                    pawnArray[i].movesLeft = moves;
                     score.movesUsed += direction.newDirectives.movesUsed;
                     /*printf("%d\n", direction.newDirectives.movesLeft);*/
                 }

@@ -36,9 +36,7 @@ table *tableCreation(int base, int height) {
 
     /*shared memory creation*/
     shmId = shmget(IPC_PRIVATE, sizeof(table), 0600);
-    TEST_ERROR;
     myTable = shmat(shmId, NULL, 0);
-    TEST_ERROR;
     /*game table definition*/
     myTable->base = base;
     myTable->height = height;
@@ -141,15 +139,15 @@ void playersCreation(int numPlayers, int numPawn) {
     int placePawnSem;
 
     placePawnSem = semget(IPC_PRIVATE, 1, 0600);
-    TEST_ERROR
+
     semctl(placePawnSem, 0, SETVAL, numPlayers);
-    TEST_ERROR
+
 
     playerSem = semget(IPC_PRIVATE, numPlayers, 0600);
-    TEST_ERROR
+
     for (i = 0; i < numPlayers; ++i) {
         semctl(playerSem, i, SETVAL, i == 0 ? 1 : 0);
-        TEST_ERROR
+
     }
     players = malloc(sizeof(pid_t) * numPlayers);
     for (i = 0; i < numPlayers && forkVal != 0; ++i) {
@@ -280,7 +278,7 @@ int main(int argc, char **argv) {
         alarm(environment.SO_MAX_TIME);
         semHandling(pawnMoveSem, 0, -1); /*round started*/
         for (i = 0; i < flagNum; ++i) {
-            msgrcv(flagQueue, &message, sizeof(int) * 2, 0, 0);/*TODO: barare o non barare, è questo il dilemma*/
+            msgrcv(flagQueue, &message, sizeof(int) * 2, i + 1, 0);
             fprintf(stderr, "flag %d received\n", message.id);
             /*il master deve ritrasmettere a tutti sun una coda separata i messaggi ricevuti da questa
              * messaggi da leggere con il flag MSG_COPY*/
