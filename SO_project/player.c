@@ -73,7 +73,7 @@ pawn *playerBirth(int pawnNum, int numPlayer, int playersTot, int pawnSem, int m
 
 #ifdef DEBUG
     fprintf(stderr, "pid: %d , i'm a player\n", getpid());
-    /*sleep(10); /*thanks debugger*/
+    sleep(10); /*thanks debugger*/
     /*printf("%d ", shmId);*/
 #endif
     sharedTable = shmat(shmId, NULL, 0);
@@ -210,6 +210,8 @@ void playerLife(int moves) {
                 if (direction.newDirectives.pid == pawnArray[j].pid) {
                     pawnArray[i].positionX = direction.newDirectives.positionX;
                     pawnArray[i].positionY = direction.newDirectives.positionY;
+                    pawnArray[i].movesLeft = direction.newDirectives.movesLeft;
+                    pawnArray[i].movesUsed = direction.newDirectives.movesUsed;
                     score.movesUsed += direction.newDirectives.movesUsed;
                     /*printf("%d\n", direction.newDirectives.movesLeft);*/
                 }
