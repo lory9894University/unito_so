@@ -315,5 +315,6 @@ void pawnLife() {
 #endif
         directives.mtype = 1;
         msgsnd(msgPawn, &directives, sizeof(pawn), 0);
+
     }
 }

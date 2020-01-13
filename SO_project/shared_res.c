@@ -1,11 +1,6 @@
 #define _GNU_SOURCE
 
 #include <sys/sem.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include "error_handling.h"
 #include "shared_res.h"
 
 /*semOp, 1 release, -1 reserve*/

@@ -13,7 +13,6 @@
 #include "env_operation.h"
 #include "player.h"
 #include "shared_res.h"
-#include "pawn.h"
 /*#define DEBUG*/
 
 /*IPCs*/
@@ -81,10 +80,10 @@ void printState(table myTable, int end) {
     }
     if (!end) {
         printf("\n\n");
-        printf("player\tpid\tscore\tmoves left\n");
+        printf("player\tpid\t\tscore\tmoves left\n");
         for (i = 0; i < environment.SO_NUM_G; ++i) {
-            movesLeft = environment.SO_N_MOVES * environment.SO_NUM_P - (playerMoves[i] - lastRoundPlayerMoves[i]);
-            printf("%d\t%d\t%d\t%d\n", i, players[i], playerScore[i], movesLeft);
+            movesLeft = environment.SO_N_MOVES * environment.SO_NUM_P - (playerMoves[i]);
+            printf("%d\t\t%d\t%d\t\t%d\n", i, players[i], playerScore[i], movesLeft);
             lastRoundPlayerMoves[i] = movesLeft;
         }
     }
@@ -209,12 +208,15 @@ void alarmHandler() {
         totScore += playerScore[i];
     }
     pointOverTime = (float) totScore / (float) (roundsTime + 3);
-    printf("round played: %d\ntotal points/gametime %f\n", rounds, pointOverTime);
-    printf("player\tpid\tmoves used/moves total\t points/moves \n");
+    printf("\nround played: %d\ntotal points/gametime %f\n", rounds, pointOverTime);
+    printf("player\tpid\t\tmoves used/moves total\t points/moves \n");
     for (i = 0; i < environment.SO_NUM_G; ++i) {
-        printf("%d\t%d\t%f\t\t%f\n", i, players[i],
-               (float) playerMoves[i] / (environment.SO_N_MOVES * environment.SO_NUM_P * rounds),
-               (float) playerScore[i] / (float) playerMoves[i]);
+        if (rounds != 1)
+            printf("%d\t\t%d\t\t  %f\t\t\t%f\n", i, players[i],
+                   (float) playerMoves[i] / (environment.SO_N_MOVES * environment.SO_NUM_P),
+                   (float) playerScore[i] / (float) playerMoves[i]);
+        else
+            printf("%d\t\t%d\t\t  NA\t\t\tNA\n", i, players[i]);
     }
     clean();
 
@@ -234,7 +236,6 @@ int main(int argc, char **argv) {
     sigaction(SIGALRM, &sa, NULL);
 
     /*setting table*/
-    setvbuf(stdout, NULL, _IONBF, 0);
     envReading(environ, &environment);
     sharedTable = tableCreation(environment.SO_BASE, environment.SO_ALTEZZA);
     flagShm = shmget(IPC_PRIVATE, sizeof(flag) * environment.SO_FLAG_MAX, 0600);
@@ -271,15 +272,16 @@ int main(int argc, char **argv) {
         /*semaphore to start the indication phase*/
         /*sleep(10);*/
         semctl(indicationSem, 0, SETVAL, environment.SO_NUM_G);
-        debug++;
-        /*waiting for the plgayers*/
+        /*waiting for the plaayers*/
         semHandling(roundStartSem, 0, 0);
         rounds++;
         alarm(environment.SO_MAX_TIME);
         semHandling(pawnMoveSem, 0, -1); /*round started*/
         for (i = 0; i < flagNum; ++i) {
             msgrcv(flagQueue, &message, sizeof(int) * 2, i + 1, 0);
+#ifdef DEBUG
             fprintf(stderr, "flag %d received\n", message.id);
+#endif
             /*il master deve ritrasmettere a tutti sun una coda separata i messaggi ricevuti da questa
              * messaggi da leggere con il flag MSG_COPY*/
             msgsnd(broadcastQueue, &message, sizeof(int) * 2, 0);
@@ -290,7 +292,6 @@ int main(int argc, char **argv) {
                 }
             }
         }
-        printf("all flags taken\n");
         roundsTime = alarm(0);
         semctl(pawnMoveSem, 0, SETVAL, 1);
         /*empty tye flagQue*/
@@ -304,7 +305,7 @@ int main(int argc, char **argv) {
             msgrcv(scoreQueue, &score, sizeof(int), 0, 0);
             for (j = 0; j < environment.SO_NUM_G; ++j) {
                 if (players[j] == score.playerPid) {
-                    playerMoves[j] = score.movesUsed;
+                    playerMoves[j] += score.movesUsed;
                 }
             }
         }
