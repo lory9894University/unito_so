@@ -74,9 +74,7 @@ void createPawn(int posX, int posY) {
     fprintf(stderr, "pid: %d , i'm a pawn. created by %d\n", getpid(), getppid());
     /*sleep(10); /*thanks debugger*/
 #endif
-    fprintf(stderr, "pid: %d , i'm a pawn. created by %d\n", getpid(), getppid());
     sharedTable = shmat(shmId, NULL, 0);
-    TEST_ERROR;
     flags = shmat(flagShm, NULL, 0);
     sharedTable->matrix[posY][posX] = 'T';
     semHandling(sharedTable->semMatrix[posY], posX, RESERVE);
@@ -130,6 +128,7 @@ void moving() {
                                     directives.newDirectives.positionX, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
                                 directives.newDirectives.movesLeft++;
+                                directives.newDirectives.movesUsed--;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
                                             directives.newDirectives.positionX, RELEASE);
@@ -142,6 +141,7 @@ void moving() {
                                     directives.newDirectives.positionX, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
                                 directives.newDirectives.movesLeft++;
+                                directives.newDirectives.movesUsed--;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
                                             directives.newDirectives.positionX, RELEASE);
@@ -178,6 +178,7 @@ void moving() {
                                     directives.newDirectives.positionX, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
                                 directives.newDirectives.movesLeft++;
+                                directives.newDirectives.movesUsed--;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
                                             directives.newDirectives.positionX, RELEASE);
@@ -204,8 +205,8 @@ void moving() {
                                     sharedTable->semMatrix[directives.newDirectives.positionY],
                                     directives.newDirectives.positionX - 1, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
-                                /*send message stuck*/
                                 directives.newDirectives.movesLeft++;
+                                directives.newDirectives.movesUsed--;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
                                             directives.newDirectives.positionX, RELEASE);
@@ -217,8 +218,8 @@ void moving() {
                                     sharedTable->semMatrix[directives.newDirectives.positionY],
                                     directives.newDirectives.positionX + 1, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
-                                /*todo:send message stuck*/
                                 directives.newDirectives.movesLeft++;
+                                directives.newDirectives.movesUsed--;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
                                             directives.newDirectives.positionX, RELEASE);
@@ -242,8 +243,8 @@ void moving() {
                                     sharedTable->semMatrix[directives.newDirectives.positionY],
                                     directives.newDirectives.positionX - 1, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
-                                /*send message stuck*/
                                 directives.newDirectives.movesLeft++;
+                                directives.newDirectives.movesUsed--;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
                                             directives.newDirectives.positionX, RELEASE);
@@ -255,8 +256,8 @@ void moving() {
                                     sharedTable->semMatrix[directives.newDirectives.positionY],
                                     directives.newDirectives.positionX + 1, RESERVE);
                             if (handlingReturn == -1 && errno == EAGAIN) {
-                                /*todo:send message stuck*/
                                 directives.newDirectives.movesLeft++;
+                                directives.newDirectives.movesUsed--;
                             } else {
                                 semHandling(sharedTable->semMatrix[directives.newDirectives.positionY],
                                             directives.newDirectives.positionX, RELEASE);
@@ -291,7 +292,6 @@ void pawnLife() {
         /*wait for instructions from player*/
         msgReturn = msgrcv(msgPawn, &directives, sizeof(pawn), getpid(), 0);
         while (errno == EINTR && msgReturn == -1) {
-            /*fprintf(stderr, "deep shit pawn\n");*/
             msgReturn = msgrcv(msgPawn, &directives, sizeof(pawn), getpid(), 0);
         }
         debugReturnSemop = semHandling(pawnMoveSem, 0, 0);
